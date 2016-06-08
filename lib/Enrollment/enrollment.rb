@@ -1,9 +1,11 @@
 require 'pry'
 
 class Enrollment
+  attr_reader :name
   def initialize(hash_thing)
     @hash_thing = hash_thing
     @sorted_enrollments = Hash.new
+    @name = hash_thing[:name]
     format_args
   end
 

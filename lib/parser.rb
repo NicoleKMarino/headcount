@@ -18,13 +18,17 @@ module Parser
       format_check(data_by_school) unless @parsed_data.empty?
       @parsed_data << data_by_school
     end
-    participation_format(@parsed_data.find_all{|r|r.first == @parsed_data.last.first})
+    participation_format(aggregate_district_data)
   end
 
   def format_check(row_data)
     if @parsed_data.last.first != row_data.first
-      participation_format(@parsed_data.find_all{|r|r.first == @parsed_data.last.first})
+      participation_format(aggregate_district_data)
     end
+  end
+
+  def aggregate_district_data
+    @parsed_data.find_all{|r|r.first == @parsed_data.last.first}
   end
 
   def participation_format(compiled_data_by_school)
@@ -36,6 +40,7 @@ module Parser
   end
 
   def format_enrollment_hash(nested_participation_hash)
+    binding.pry
     Enrollment.new({:name => @parsed_data.last.first, :kindergarten_participation => nested_participation_hash})
   end
 end
