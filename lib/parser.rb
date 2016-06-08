@@ -40,6 +40,6 @@ module Parser
   end
 
   def format_enrollment_hash(nested_participation_hash)
-    Enrollment.new({:name => @parsed_data.last.first, :kindergarten_participation => nested_participation_hash})
+    @enrollments << Enrollment.new({:name => @parsed_data.last.first, :kindergarten_participation => nested_participation_hash})
   end
 end
