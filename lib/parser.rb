@@ -36,10 +36,13 @@ module Parser
       result[school_data[1]] = school_data.last
       result
     end
-    format_enrollment_hash(participation_by_school)
+    format_enrollment_hash(participation_by_school, compiled_data_by_school.first.first)
   end
 
-  def format_enrollment_hash(nested_participation_hash)
-    @enrollments << Enrollment.new({:name => @parsed_data.last.first, :kindergarten_participation => nested_participation_hash})
+  def format_enrollment_hash(nested_participation_hash, district_name)
+    if @enrollments.any?{|enrollment|enrollment.name == district_name}
+      @enrollments.reject!{|enrollment|enrollment.name == district_name}
+    end
+    @enrollments << Enrollment.new({:name => @parsed_data.last.first, :kindergarten_participation => nested_participation_hash.sort.to_h})
   end
 end
