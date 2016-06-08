@@ -2,15 +2,15 @@ require 'pry'
 
 class Enrollment
   attr_reader :name
-  def initialize(hash_thing)
-    @hash_thing = hash_thing
+  def initialize(enrollment_data_by_district)
+    @enrollment_data_by_district = enrollment_data_by_district
     @sorted_enrollments = Hash.new
-    @name = hash_thing[:name]
+    @name = enrollment_data_by_district[:name]
     format_args
   end
 
   def format_args
-    @hash_thing[:kindergarten_participation].each do |key,value|
+    @enrollment_data_by_district[:kindergarten_participation].each do |key,value|
       @sorted_enrollments[key] = truncate_float(value)
     end
   end

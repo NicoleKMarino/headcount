@@ -40,7 +40,6 @@ module Parser
   end
 
   def format_enrollment_hash(nested_participation_hash)
-    binding.pry
     Enrollment.new({:name => @parsed_data.last.first, :kindergarten_participation => nested_participation_hash})
   end
 end
