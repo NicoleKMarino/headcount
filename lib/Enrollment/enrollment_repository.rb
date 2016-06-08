@@ -20,5 +20,3 @@ class EnrollmentRepository
     @data = CSV.open(filename, headers: true, header_converters: :symbol)
   end
 end
-e = EnrollmentRepository.new
-e.open_csv("./data/kindergartners_in_full_day_program.csv")
