@@ -1,7 +1,12 @@
+require "/Users/Nicole/Documents/mod1/headcount/lib/District/district_repository.rb"
+
 class HeadcountAnalyst
-  def initialize(district_repo)
-    @dr= district_repo
+  def initialize
+    @dr= DistrictRepository.new
+    @enrollment= @dr.load_data
+    binding.pry
   end
+
 
   def find_district_average(district)
     array=[]
