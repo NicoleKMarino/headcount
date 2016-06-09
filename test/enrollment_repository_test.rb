@@ -9,7 +9,6 @@ class EnrollmentRepositoryTest < Minitest::Test
     enrollment_repo = EnrollmentRepository.new
 
     result = enrollment_repo.open_csv('./test/test_kindergartners_in_full_day_program.csv') 
-    binding.pry
     assert_instance_of Enrollment, result
   end
 end

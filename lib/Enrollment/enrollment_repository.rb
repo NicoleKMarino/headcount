@@ -13,7 +13,7 @@ class EnrollmentRepository
   end
 
   def load_data(kindergarten_enrollment_data)
-    filename = kindergarten_enrollment_data.dig[:enrollment, :kindergarten]
+    filename = kindergarten_enrollment_data.dig(:enrollment, :kindergarten)
     open_csv(filename)
   end
 end

@@ -1,13 +1,8 @@
-require "csv"
-
-
 class District
-  def initialize(district_hash)
-    @name = district_hash[:name]
-  end
-
-
-  def name
-    return @name.upcase
+  attr_reader :name
+  attr_accessor :enrollment
+  def initialize(name_hash)
+    @name = name_hash[:name]
+    @enrollment = nil
   end
 end

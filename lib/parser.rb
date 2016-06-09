@@ -23,7 +23,7 @@ module Parser
   end
 
   def format_check(row_data)
-    if @parsed_data.last.first != row_data.first
+    unless @parsed_data.last.first == row_data.first
       participation_format(aggregate_district_data)
     end
   end
