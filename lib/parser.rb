@@ -19,6 +19,7 @@ module Parser
       @parsed_data << data_by_school
     end
     participation_format(aggregate_district_data)
+    @enrollments.sort_by!{|enrollment|enrollment.name}
   end
 
   def format_check(row_data)
