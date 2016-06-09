@@ -1,16 +1,12 @@
-require "csv"
 require 'pry'
 require "/Users/Nicole/Documents/mod1/headcount/lib/Enrollment/enrollment_repository.rb"
 require "/Users/Nicole/Documents/mod1/headcount/lib/District/district.rb"
-require "/Users/Nicole/Documents/mod1/headcount/lib/parser.rb"
 
-require 'pry'
-require_relative '../Enrollment/enrollment_repository'
-require_relative 'district'
+
 class DistrictRepository
   attr_reader :districts
   def initialize
-    @er = EnrollmentRepository.new
+    @er=EnrollmentRepository.new
   end
 
   def load_data(enrollment_hash)
@@ -34,6 +30,4 @@ class DistrictRepository
   def find_all_matching(district_fragment)
     @districts.find_all{|district|district.name.include?(district_fragment.upcase)}
   end
-end
-
 end

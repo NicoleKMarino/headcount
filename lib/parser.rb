@@ -1,4 +1,4 @@
-require './lib/Enrollment/enrollment'
+require "/Users/Nicole/Documents/mod1/headcount/lib/Enrollment/enrollment.rb"
 require 'csv'
 require 'pry'
 
@@ -47,21 +47,3 @@ module Parser
     @enrollments << Enrollment.new({:name => @parsed_data.last.first, :kindergarten_participation => nested_participation_hash.sort.to_h})
   end
 end
-
-# A
-#  \
-#   B
-#    \
-#    C
-
-
-# D
-# | - A
-# | - B
-# | - C
-
-#
-# def all_steps
-#   result_from_one = step_one(original)
-#   resutl_from_two = step_two(result_from_one)
-# end

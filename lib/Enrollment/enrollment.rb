@@ -1,7 +1,7 @@
 require 'pry'
 
 class Enrollment
-  attr_reader :name, :sorted_enrollments
+  attr_reader :name
   def initialize(enrollment_data_by_district)
     @enrollment_data_by_district = enrollment_data_by_district
     @sorted_enrollments = Hash.new
