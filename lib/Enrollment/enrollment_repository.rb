@@ -1,7 +1,7 @@
 require 'csv'
 require 'pry'
 require_relative 'enrollment'
-require './lib/parser'
+require_relative '../../lib/parser'
 
 class EnrollmentRepository
   include Parser
@@ -16,4 +16,5 @@ class EnrollmentRepository
     filename = kindergarten_enrollment_data.dig(:enrollment, :kindergarten)
     open_csv(filename)
   end
+
 end

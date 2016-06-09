@@ -23,7 +23,6 @@ class Enrollment
     (float * 1000).floor / 1000.to_f
   end
 
-
   def kindergarten_participation_in_year(year)
     @sorted_enrollments[year]
   end
