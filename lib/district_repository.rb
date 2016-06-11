@@ -1,5 +1,5 @@
 require 'pry'
-require_relative '../Enrollment/enrollment_repository'
+require_relative 'enrollment_repository'
 require_relative 'district'
 class DistrictRepository
   attr_reader :districts
@@ -26,8 +26,8 @@ class DistrictRepository
   end
 
   def find_all_matching(district_fragment)
-    @districts.find_all do |name, dstrct|
-      dstrct if name.include?(district_fragment.upcase)
-    end.flatten
+    @districts.values.find_all do |dstrct|
+      dstrct if dstrct.name.include?(district_fragment.upcase)
+    end
   end
 end

@@ -1,6 +1,5 @@
-require './lib/Enrollment/enrollment'
+require_relative 'enrollment'
 require 'csv'
-require 'pry'
 
 module Parser
 
@@ -16,7 +15,7 @@ module Parser
       percent = row[:data].to_f
       data_by_school = {district => {year => percent}}
       merge_data(data_by_school)
-      format_enrollment_hash(district)
+      format_enrollment(district)
     end
   end
 
@@ -26,7 +25,7 @@ module Parser
     end
   end
 
-  def format_enrollment_hash(district_name)
+  def format_enrollment(district_name)
     new_enrollment = {district_name => Enrollment.new({:name => district_name, :kindergarten_participation => @parsed_data[district_name].sort.to_h})}
     @enrollments.merge!(new_enrollment)
   end
