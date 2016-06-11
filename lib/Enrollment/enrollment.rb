@@ -5,7 +5,7 @@ class Enrollment
   def initialize(enrollment_data_by_district)
     @enrollment_data_by_district = enrollment_data_by_district
     @sorted_enrollments = Hash.new
-    @name = enrollment_data_by_district[:name]
+    @name = enrollment_data_by_district.dig(:name)
     format_args
   end
 

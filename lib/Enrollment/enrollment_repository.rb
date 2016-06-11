@@ -5,11 +5,11 @@ require_relative '../../lib/parser'
 
 class EnrollmentRepository
   include Parser
-  attr_accessor :parsed_data, :enrollments
+  attr_accessor :enrollments
 
   def initialize
-    @parsed_data = Array.new
-    @enrollments = Array.new
+    @parsed_data = Hash.new
+    @enrollments = Hash.new
   end
 
   def load_data(kindergarten_enrollment_data)

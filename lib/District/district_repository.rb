@@ -13,19 +13,21 @@ class DistrictRepository
   end
 
   def create_districts(enrollments)
-    @districts = enrollments.reduce([]) do |districts, enrollment|
-      district = District.new({:name => enrollment.name})
-      district.enrollment = enrollment
-      districts << district
-      districts
+    @districts = Hash.new
+    enrollments.each do |district, enrollment_data|
+      district = District.new({:name => enrollment_data.name})
+      district.enrollment = enrollment_data
+      districts[enrollment_data.name] = district
     end
   end
 
   def find_by_name(district_name)
-    @districts.find{|district|district.name.upcase == district_name.upcase}
+   @districts[district_name.upcase]
   end
 
   def find_all_matching(district_fragment)
-    @districts.find_all{|district|district.name.include?(district_fragment.upcase)}
+    @districts.find_all do |name, dstrct|
+      dstrct if name.include?(district_fragment.upcase)
+    end.flatten
   end
 end
