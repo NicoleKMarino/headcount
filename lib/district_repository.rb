@@ -1,4 +1,3 @@
-require 'pry'
 require_relative 'enrollment_repository'
 require_relative 'district'
 class DistrictRepository
@@ -22,7 +21,17 @@ class DistrictRepository
   end
 
   def find_by_name(district_name)
-   @districts[district_name.upcase]
+    if district_name.class == Hash
+      sort_request(district_name)
+    else
+      @districts[district_name]
+    end
+  end
+
+  def sort_request(district_name)
+    if district_name.keys.first == :against
+      find_by_name(district_name.dig(:against).upcase)
+    end 
   end
 
   def find_all_matching(district_fragment)
