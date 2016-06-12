@@ -18,6 +18,7 @@ class DistrictRepository
       district.enrollment = enrollment_data
       districts[enrollment_data.name] = district
     end
+    binding.pry
   end
 
   def find_by_name(district_name)

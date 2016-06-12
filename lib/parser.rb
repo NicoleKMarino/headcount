@@ -29,27 +29,27 @@ module Parser
 
   def sort_enrollment(district_name)
     if @filename.include?("Kindergartners")
-      kindergarten_enrollment(district_name)
+      format_kindergarten_enrollment(district_name)
     elsif @filename.include?("High school")
-      hs_graduation_enrollment(district_name)
+      format_graduation_enrollment(district_name)
     end
   end
   
-  def kindergarten_enrollment(district_name)
+  def format_kindergarten_enrollment(district_name)
     new_enrollment = {district_name => Enrollment.new({:name => district_name, :kindergarten_participation => @parsed_data[district_name].sort.to_h})}
-    format_enrollment(new_enrollment)
+    add_enrollment(new_enrollment)
   end
 
-  def hs_graduation_enrollment(district_name)
+  def format_graduation_enrollment(district_name)
     new_enrollment = {district_name => Enrollment.new({:name => district_name, :high_school_graduation => @parsed_data[district_name].sort.to_h})}
-    if @enrollments[district_name] != nil
+    unless @enrollments[district_name] == nil
       @enrollments[district_name].append_enrollment_data(new_enrollment[district_name])
     else
-      format_enrollment(new_enrollment)
+      add_enrollment(new_enrollment)
     end
   end
 
-  def format_enrollment(new_enrollment)
+  def add_enrollment(new_enrollment)
     @enrollments.merge!(new_enrollment)
   end
 end

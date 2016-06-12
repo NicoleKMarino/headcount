@@ -1,6 +1,5 @@
 class Enrollment
-  attr_accessor :enrollment_data_by_district
-  attr_reader :name
+  attr_reader :name, :enrollment_data_by_district
   def initialize(enrollment_data_by_district)
     @name = enrollment_data_by_district.dig(:name)
     @enrollment_data_by_district = enrollment_data_by_district
@@ -13,17 +12,15 @@ class Enrollment
   end
 
   def truncate_float(float)
-    unless float == nil
-      (float * 1000).floor / 1000.to_f
-    end
+    (float * 1000).floor / 1000.to_f unless float == nil
   end
 
   def kindergarten_participation_in_year(year)
     truncate_float(@enrollment_data_by_district.dig(:kindergarten_participation)[year])
   end
 
-  def append_enrollment_data(conflicting_enrollment)
-    @enrollment_data_by_district.merge!(conflicting_enrollment.enrollment_data_by_district)
+  def append_enrollment_data(conflicting_district)
+    @enrollment_data_by_district.merge!(conflicting_district.enrollment_data_by_district)
   end
 
   def graduation_rate_by_year
