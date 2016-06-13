@@ -1,5 +1,6 @@
 require_relative 'enrollment_repository'
 require_relative 'district'
+
 class DistrictRepository
   attr_reader :districts
   def initialize
@@ -18,7 +19,6 @@ class DistrictRepository
       district.enrollment = enrollment_data
       districts[enrollment_data.name] = district
     end
-    binding.pry
   end
 
   def find_by_name(district_name)

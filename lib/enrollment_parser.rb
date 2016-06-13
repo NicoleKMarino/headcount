@@ -2,17 +2,13 @@ require 'pry'
 require_relative 'enrollment'
 require 'csv'
 
-module Parser
+module EnrollmentParser
 
   def open_csv(filename)
     @filename = filename
     @parsed_data = Hash.new
     contents = CSV.open(filename, headers: true, header_converters: :symbol)
-    if @filename.include?("proficien")
-      parse_statewide(contents)
-    else
-      parse_enrollments(contents)
-    end
+    parse_enrollments(contents)
   end
 
   def parse_enrollments(opened_csv)

@@ -1,9 +1,8 @@
 require 'pry'
 require_relative 'enrollment'
-require_relative 'parser'
-
+require_relative 'enrollment_parser'
 class EnrollmentRepository
-  include Parser
+  include EnrollmentParser
   attr_reader :enrollments
 
   def initialize
@@ -11,12 +10,16 @@ class EnrollmentRepository
   end
 
   def load_data(enrollment_data)
-    @parsed_data = Hash.new
     kindergarten_file = enrollment_data.dig(:enrollment, :kindergarten)
     hs_graduation_file = enrollment_data.dig(:enrollment, :high_school_graduation)
-    sort_request(kindergarten_file, hs_graduation_file)
+    sort_enrollment_request(kindergarten_file, hs_graduation_file)
   end
-  
+
+  def sort_enrollment_request(kindergarten_file, hs_graduation_file)
+    open_csv(kindergarten_file) unless kindergarten_file == nil
+    open_csv(hs_graduation_file) unless hs_graduation_file == nil
+  end
+
   def create_kindergarten_enrollment(district_name)
     new_enrollment = {district_name => Enrollment.new({:name => district_name, :kindergarten_participation => @parsed_data[district_name].sort.to_h})}
     add_enrollment(new_enrollment)
