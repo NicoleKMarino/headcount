@@ -31,7 +31,7 @@ class StatewideRepository
     end
   end
 
-  def create_sw_test_by_grade(district, scores_by_district)
+  def create_sw_test(district, scores_by_district)
     new_test = ({district => StatewideTest.new(scores_by_district)})
     unless @statewide_tests[district] == nil
       @statewide_tests[district].append_new_data(new_test[district])
