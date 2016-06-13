@@ -1,19 +1,11 @@
-<<<<<<< HEAD
 require_relative "district_repository"
 require_relative "enrollment_repository"
 
-class HeadcountAnalyst
-  def initialize(dr=DistrictRepository.new)
-    @dr = dr
-=======
-require "/Users/Nicole/Documents/mod1/headcount/lib/district_repository.rb"
-require "/Users/Nicole/Documents/mod1/headcount/lib/enrollment_repository.rb"
 
 class HeadcountAnalyst
   def initialize
     @dr = DistrictRepository.new
-    @enrollment= @dr.load_data({:enrollment => {:kindergarten =>'/Users/Nicole/Documents/mod1/headcount/data/kindergartners_in_full_day_program.csv', :high_school_graduation => '/Users/Nicole/Documents/mod1/headcount/data/High school graduation rates.csv'}})
->>>>>>> 24c05a6cef476b03ae3afdbef205c8ff9dc02655
+    @enrollment= @dr.load_data({:enrollment => {:kindergarten => './data/Kindergartners in full-day program.csv', :high_school_graduation => './data/High school graduation rates.csv'}})
   end
 
   def district(name)
@@ -29,23 +21,14 @@ class HeadcountAnalyst
     district2 = district(district_name2)
     result = district1 / district2
   end
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> 24c05a6cef476b03ae3afdbef205c8ff9dc02655
   def display_result(result)
     if result < 1
       "there was no significant change"
     else
       "There was a significant change"
-<<<<<<< HEAD
     end
   end
-end
-=======
-  end
-end
 
    def kindergarten_participation_rate_variation_trend(district_name1,district_name2)
      district1 =@dr.find_by_name(district_name1)
@@ -98,17 +81,10 @@ end
      kindergarten_variation= district(district_name) / district("Colorado")
      hs_variation=graduation_rate_average(district_name) / graduation_rate_average("Colorado")
      result= kindergarten_variation/hs_variation
-     binding.pry
      if result.between?(0.6, 1.5)
        puts "There is a correlation"
      else
        puts "There wasnt a correlation"
    end
  end
-
- def 
- end
-
- ha = HeadcountAnalyst.new
-ha.kindergarten_participation_correlates_with_high_school_graduation("ACADEMY 20")
->>>>>>> 24c05a6cef476b03ae3afdbef205c8ff9dc02655
+end
