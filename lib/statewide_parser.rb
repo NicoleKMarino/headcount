@@ -36,11 +36,10 @@ module StatewideParser
   def format_grade_test(district, subject, year, percent)
     if @filename.include?("3rd")
       scores_by_district = {:third_grade => @parsed_data[district]}
-      create_third_grade_sw_test(district, scores_by_district)
     elsif @filename.include?("8th")
       scores_by_district = {:eighth_grade => @parsed_data[district]}
-      create_eighth_grade_sw_test(district, scores_by_district)
     end
+    create_sw_test_by_grade(district, scores_by_district)
   end
 
   def merge_statewide_data(data_by_district, subject)
