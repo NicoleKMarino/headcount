@@ -1,6 +1,8 @@
+
 require "/Users/Nicole/Documents/mod1/headcount/lib/enrollment.rb"
 require 'csv'
 require 'pry'
+
 
 module Parser
 
@@ -13,10 +15,14 @@ module Parser
     @filename = filename
     @parsed_data = Hash.new
     contents = CSV.open(filename, headers: true, header_converters: :symbol)
-    parse_contents(contents)
+    if @filename.include?("proficien")
+      parse_statewide(contents)
+    else
+      parse_enrollments(contents)
+    end
   end
 
-  def parse_contents(opened_csv)
+  def parse_enrollments(opened_csv)
     opened_csv.each do |row|
       district = row[:location]
       year = row[:timeframe].to_i
@@ -32,6 +38,8 @@ module Parser
       old_ptcpn.merge!(new_ptcpn)
     end
   end
+
+
   def sort_enrollment(district_name)
     if @filename.include?('kindergartners')
       create_kindergarten_enrollment(district_name)
