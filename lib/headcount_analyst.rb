@@ -1,3 +1,4 @@
+require 'pry'
 require_relative "district_repository"
 require_relative "enrollment_repository"
 
@@ -76,15 +77,30 @@ class HeadcountAnalyst
     end
    end
 
-
+   def find_statewide_correlation
+     correlations = []
+     @dr.districts.each do |name, info|
+       kindergarten_variation = district(name) / district("Colorado")
+       hs_variation = graduation_rate_average(name) / graduation_rate_average("Colorado")
+       result = kindergarten_variation / hs_variation
+       if (0.6..1.5).cover?(result)
+         correlations.push(result)
+       else
+         "test"
+       end
+     end
+   end
+   end
    def kindergarten_participation_correlates_with_high_school_graduation(district_name)
      kindergarten_variation= district(district_name) / district("Colorado")
      hs_variation=graduation_rate_average(district_name) / graduation_rate_average("Colorado")
      result= kindergarten_variation/hs_variation
-     if result.between?(0.6, 1.5)
+     if (0.6, 1.5).cover?(result)
        puts "There is a correlation"
      else
        puts "There wasnt a correlation"
    end
  end
 end
+ha = HeadcountAnalyst.new
+ha.whatever

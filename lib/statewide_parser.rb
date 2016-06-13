@@ -29,10 +29,13 @@ module StatewideParser
       merge_statewide_data(data_by_district)
       format_grade_test(district)
     else
-      data_by_district = {district => {ethnicity.gsub(" ", "/").split("/").join("_").downcase.to_sym => {year => percent}}}
-      merge_statewide_data(data_by_district)
+      merge_statewide_data(format_ethnic_categories(district, ethnicity, year, percent))
       format_ethnicity_test(district)
     end
+  end
+
+  def format_ethnic_categories(district, ethnicity, year, percent)
+    data_by_district = {district => {ethnicity.gsub(" ", "_").split("/").last.downcase.to_sym => {year => percent}}}
   end
 
   def merge_statewide_data(data_by_district)
