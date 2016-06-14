@@ -16,11 +16,6 @@ class EnrollmentRepository
     sort_enrollment_request(kindergarten_file, hs_graduation_file)
   end
 
-  def sort_enrollment_request(kindergarten_file, hs_graduation_file)
-    open_csv(kindergarten_file) unless kindergarten_file == nil
-    open_csv(hs_graduation_file) unless hs_graduation_file == nil
-  end
-
   def create_enrollment(district_name, enrollment_specs)
     new_enrollment = {district_name => Enrollment.new(enrollment_specs)}
     unless @enrollments[district_name] == nil

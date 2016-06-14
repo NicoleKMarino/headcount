@@ -4,6 +4,11 @@ require 'csv'
 
 module EnrollmentParser
 
+  def sort_enrollment_request(kindergarten_file, hs_graduation_file)
+    open_csv(kindergarten_file) unless kindergarten_file == nil
+    open_csv(hs_graduation_file) unless hs_graduation_file == nil
+  end
+
   def open_csv(filename)
     @filename = filename
     @parsed_data = Hash.new

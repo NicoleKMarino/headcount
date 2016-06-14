@@ -1,3 +1,4 @@
+require_relative 'proficiency_parser'
 require 'pry'
 
 class StatewideTest
@@ -11,12 +12,11 @@ class StatewideTest
   end
 
   def proficient_by_grade(grade)
+    parser = ProficiencyParser.new
     if grade == 3
-      raw_data = @proficiency_by_district[:third_grade]
-      format_proficiency_by_year(raw_data)
+      parser.format_proficiency_by_year(@proficiency_by_district[:third_grade])
     elsif grade == 8
-      raw_data = @proficiency_by_district[:eighth_grade]
-      format_proficiency_by_year(raw_data)
+      parser.format_proficiency_by_year(@proficiency_by_district[:eighth_grade])
     else
       #raise UnknownDataError
     end
@@ -24,10 +24,8 @@ class StatewideTest
 
   def proficient_by_ethnicity(race)
     unless @proficiency_by_district[:math][race] == nil
-      math = {:math => @proficiency_by_district[:math][race]}
-      reading = {:reading => @proficiency_by_district[:reading][race]}
-      writing = {:writing => @proficiency_by_district[:writing][race]}
-      format_proficiency_by_year(math.merge(reading.merge(writing)))
+      parser = ProficiencyParser.new
+      parser.format_proficiency_by_ethnicity(@proficiency_by_district, race)
     else
       #raise UnknownRaceError
     end
@@ -39,30 +37,6 @@ class StatewideTest
 
   def proficient_for_subject_by_grade_in_year(subject, grade, year)
     proficient_by_grade(grade)[year][subject]
-  end
-
-  def format_proficiency_by_year(data)
-    formatted_by_year = data.values.reduce do |subject1,subject2|
-      subject1.sort.zip(subject2.sort)
-    end.map{|subject|subject.flatten}.map{|row|row.uniq}
-    sort_grade_proficiency_by_year(formatted_by_year, data)
-  end
-
-  def sort_grade_proficiency_by_year(formatted_by_year, aggregated_data)
-    sorted_years = formatted_by_year.group_by{|row|row.shift}
-    sort_by_subject(sorted_years, aggregated_data)
-  end
-
-  def sort_by_subject(sorted_years, data)
-    sorted_by_subject = sorted_years.reduce({}) do |result, scores|
-      result.merge!({scores.first => data.keys.zip(scores.last.flatten.map do |percent|
-        truncate_float(percent)
-      end).to_h})
-    end
-  end
-    
-  def truncate_float(float)
-    (float * 1000).floor / 1000.to_f unless float == nil
   end
 
 end

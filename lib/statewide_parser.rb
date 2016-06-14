@@ -3,6 +3,23 @@ require 'csv'
 
 module StatewideParser
 
+  def assert_files(statewide_hash)
+    statewide_testing = statewide_hash.dig(:statewide_testing)
+    valid_tests = Array.new
+    valid_tests << statewide_testing.dig(:third_grade)
+    valid_tests << statewide_testing.dig(:eighth_grade)
+    valid_tests << statewide_testing.dig(:math)
+    valid_tests << statewide_testing.dig(:reading)
+    valid_tests << statewide_testing.dig(:writing)
+    load_requests(valid_tests)
+  end
+
+  def load_requests(tests)
+    tests.each do |test|
+      open_csv(test) unless test == nil
+    end
+  end
+
   def open_csv(filename)
     @filename = filename
     @parsed_data = Hash.new
@@ -19,6 +36,7 @@ module StatewideParser
       percent = row[:data].to_f
       sort_statewide_tests(district, ethnicity, subject, year, percent)
     end
+    binding.pry
   end
 
   def sort_statewide_tests(district, ethnicity, subject, year, percent)

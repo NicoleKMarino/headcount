@@ -6,6 +6,10 @@ class Enrollment
     @enrollment_data_by_district = enrollment_data_by_district
   end
 
+  def append_enrollment_data(conflicting_district)
+    @enrollment_data_by_district.merge!(conflicting_district.enrollment_data_by_district)
+  end
+
   def kindergarten_participation_by_year
     @enrollment_data_by_district.dig(:kindergarten_participation).reduce({}) do |result,ptcptn_by_year|
       result.merge({ptcptn_by_year.first => truncate_float(ptcptn_by_year.last)})
@@ -18,10 +22,6 @@ class Enrollment
 
   def kindergarten_participation_in_year(year)
     truncate_float(@enrollment_data_by_district.dig(:kindergarten_participation)[year])
-  end
-
-  def append_enrollment_data(conflicting_district)
-    @enrollment_data_by_district.merge!(conflicting_district.enrollment_data_by_district)
   end
 
   def graduation_rate_by_year
