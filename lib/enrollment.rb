@@ -1,3 +1,5 @@
+require "/Users/Nicole/Documents/mod1/headcount/lib/enrollment_repository.rb"
+
 class Enrollment
   attr_accessor :enrollment_data_by_district
   attr_reader :name

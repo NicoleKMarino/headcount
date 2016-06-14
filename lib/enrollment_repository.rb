@@ -1,6 +1,6 @@
 require 'csv'
 require 'pry'
-require_relative 'enrollment'
+require "/Users/Nicole/Documents/mod1/headcount/lib/enrollment.rb"
 require "/Users/Nicole/Documents/mod1/headcount/lib/parser.rb"
 
 class EnrollmentRepository
