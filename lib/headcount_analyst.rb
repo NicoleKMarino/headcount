@@ -32,12 +32,12 @@ class HeadcountAnalyst
   end
 
    def kindergarten_participation_rate_variation_trend(district_name1,district_name2)
-     district1 =@dr.find_by_name(district_name1)
-     district2 =@dr.find_by_name(district_name2)
-     percents1= find_average_by_year(district1)
-     percents2= find_average_by_year(district2)
+     district1 = @dr.find_by_name(district_name1)
+     district2 = @dr.find_by_name(district_name2)
+     percents1 = find_average_by_year(district1)
+     percents2 = find_average_by_year(district2)
      yearly_difference = percents1.map do |key,value|
-       percents2value=percents2[key]
+       percents2value = percents2[key]
        value/percents2value
     end
     puts yearly_difference

@@ -18,15 +18,19 @@ class StatewideTest
       raw_data = @proficiency_by_district[:eighth_grade]
       format_proficiency_by_year(raw_data)
     else
-      raise UnknownDataError
+      #raise UnknownDataError
     end
   end
 
   def proficient_by_ethnicity(race)
-    math = {:math => @proficiency_by_district[:math][race]}
-    reading = {:reading => @proficiency_by_district[:reading][race]}
-    writing = {:writing => @proficiency_by_district[:writing][race]}
-    format_proficiency_by_year(math.merge(reading.merge(writing)))
+    unless @proficiency_by_district[:math][race] == nil
+      math = {:math => @proficiency_by_district[:math][race]}
+      reading = {:reading => @proficiency_by_district[:reading][race]}
+      writing = {:writing => @proficiency_by_district[:writing][race]}
+      format_proficiency_by_year(math.merge(reading.merge(writing)))
+    else
+      #raise UnknownRaceError
+    end
   end
 
   def proficient_for_subject_by_race_in_year(subject, ethnicity, year)
@@ -40,7 +44,7 @@ class StatewideTest
   def format_proficiency_by_year(data)
     formatted_by_year = data.values.reduce do |subject1,subject2|
       subject1.sort.zip(subject2.sort)
-    end.map{|year|year.flatten}.map{|row|row.uniq!}
+    end.map{|subject|subject.flatten}.map{|row|row.uniq}
     sort_grade_proficiency_by_year(formatted_by_year, data)
   end
 
@@ -56,8 +60,9 @@ class StatewideTest
       end).to_h})
     end
   end
-
+    
   def truncate_float(float)
     (float * 1000).floor / 1000.to_f unless float == nil
   end
+
 end

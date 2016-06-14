@@ -38,8 +38,10 @@ class DistrictRepository
   def find_by_name(district_name)
     if district_name.class == Hash
       sort_request(district_name)
-    else
+    elsif district_name == "Colorado"
       @districts[district_name]
+    else
+      @districts[district_name.upcase]
     end
   end
 

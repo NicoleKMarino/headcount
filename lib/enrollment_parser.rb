@@ -20,7 +20,6 @@ module EnrollmentParser
       merge_data(data_by_school)
       sort_enrollment(district)
     end
-    binding.pry
   end
 
   def merge_data(district_info)
@@ -35,6 +34,6 @@ module EnrollmentParser
     elsif @filename.include?("High school")
       enrollment_specs = {:name => district_name, :high_school_graduation => @parsed_data[district_name].sort.to_h}
     end
-      create_enrollment(district_name, enrollment_specs)
+    create_enrollment(district_name, enrollment_specs)
   end
 end
