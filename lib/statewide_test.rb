@@ -1,3 +1,4 @@
+require_relative 'errors'
 require_relative 'proficiency_parser'
 require 'pry'
 
@@ -18,7 +19,7 @@ class StatewideTest
     elsif grade == 8
       parser.format_proficiency_by_year(@proficiency_by_district[:eighth_grade])
     else
-      #raise UnknownDataError
+      raise UnknownDataError, "No known grade in statewide proficiency statistics"
     end
   end
 
@@ -27,7 +28,7 @@ class StatewideTest
       parser = ProficiencyParser.new
       parser.format_proficiency_by_ethnicity(@proficiency_by_district, race)
     else
-      #raise UnknownRaceError
+      raise UnknownRaceError, "No known race in statewide proficiency statistics"
     end
   end
 

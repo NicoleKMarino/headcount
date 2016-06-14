@@ -1,9 +1,5 @@
-Class UnknownDataError
-  def initialize
-  end
+class UnknownDataError < StandardError
 end
 
-Class UnknownRaceError
- def initialize
- end
+class UnknownRaceError < StandardError
 end
