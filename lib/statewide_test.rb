@@ -23,7 +23,7 @@ class StatewideTest
     end
   end
 
-  def proficient_by_ethnicity(race)
+  def proficient_by_race_or_ethnicity(race)
     unless @proficiency_by_district[:math][race] == nil
       parser = ProficiencyParser.new
       parser.format_proficiency_by_ethnicity(@proficiency_by_district, race)
@@ -33,7 +33,7 @@ class StatewideTest
   end
 
   def proficient_for_subject_by_race_in_year(subject, ethnicity, year)
-    proficient_by_ethnicity(ethnicity)[year][subject]
+    proficient_by_race_or_ethnicity(ethnicity)[year][subject]
   end
 
   def proficient_for_subject_by_grade_in_year(subject, grade, year)

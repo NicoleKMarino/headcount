@@ -36,7 +36,6 @@ module StatewideParser
       percent = row[:data].to_f
       sort_statewide_tests(district, ethnicity, subject, year, percent)
     end
-    binding.pry
   end
 
   def sort_statewide_tests(district, ethnicity, subject, year, percent)

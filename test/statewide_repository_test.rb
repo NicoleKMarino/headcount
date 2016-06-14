@@ -1,10 +1,10 @@
-require_relative '../lib/statewide_repository'
+require_relative '../lib/statewide_test_repository'
 require 'minitest/autorun'
 require 'minitest/pride'
 
-class StatewideRepositoryTest < Minitest::Test
+class StatewideTestRepositoryTest < Minitest::Test
   def test_can_identify_different_files
-    sr = StatewideRepository.new
+    sr = StatewideTestRepository.new
     sr.load_data({:statewide_testing => {
                     :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
                     :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",

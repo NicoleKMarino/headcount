@@ -1,4 +1,4 @@
-require_relative 'statewide_repository'
+require_relative 'statewide_test_repository'
 require_relative 'enrollment_repository'
 require_relative 'district'
 require_relative 'statewide_test'
@@ -8,7 +8,7 @@ class DistrictRepository
   attr_reader :districts, :statewide_tests
   def initialize
     @er = EnrollmentRepository.new
-    @sr = StatewideRepository.new
+    @sr = StatewideTestRepository.new
   end
 
   def load_data(enrollment_hash, statewide_hash=nil)
@@ -33,6 +33,7 @@ class DistrictRepository
     statewide_tests.each do |district, statewide_proficiency|
       find_by_name(district).statewide_test = statewide_proficiency
     end
+    binding.pry
   end
 
   def find_by_name(district_name)
