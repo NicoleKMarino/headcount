@@ -29,47 +29,74 @@ module EconomicProfileParser
     economic_contents.each do |row|
       district = row[:location]
       year = row[:timeframe]
-      data_format = row[:dataformat]
-      data = row[:data]
-      lunch_eligibility = row[:poverty_level]
-      household_income?(district, year, data)
-      children_in_poverty?(district, year, data_format, data)
-      lunch_eligibility?(district, year, data, data_format, lunch_eligibility)
-      title_i?(district, year, data)
+      household_income?(district, year, row[:data])
+      children_in_poverty?(district, year, row[:dataformat], row[:data])
+      lunch?(district, year, row[:data], row[:dataformat], row[:poverty_level])
+      title_i?(district, year, row[:data])
     end
   end
 
   def household_income?(district, year, data)
-    format_household_income(district, year, data) if @filename.include?("household")
+   if @filename.include?("household")
+    format_household_income(district, year, data)
+   end
   end
 
   def format_household_income(district, year, data)
-    income = {district => {:median_household_income => {year.split("-").map(&:to_i) => data.to_i}}} 
-    merge_economic_information(income)
+    merge_economic_information(household_income(district, year, data))
     create_economic_profile(district)
+  end
+
+  def household_income(district, year, data)
+    {district => {:median_household_income => income_adjustment(year, data)}} 
+  end
+
+  def income_adjustment(year, data)
+    {year.split("-").map(&:to_i) => data.to_i}
   end
 
   def children_in_poverty?(district, year, data_format, data)
-    format_children_in_poverty(district, year, data_format, data) if @filename.include?("poverty") && data.to_f < 1
+   if @filename.include?("poverty") && data.to_f < 1
+    format_children_in_poverty(district, year, data_format, data)
+   end
   end
 
   def format_children_in_poverty(district, year, data_format, data)
-    merge_economic_information({district => {:children_in_poverty => {year.to_i => data.to_f}}})
+    poverty_data = children_in_poverty(district, year, data_format, data)
+    merge_economic_information(poverty_data)
     create_economic_profile(district)
   end
 
-  def lunch_eligibility?(district, year, data, data_format, lunch_eligibility)
-    format_lunch_data(district, year, data, data_format, lunch_eligibility) unless lunch_eligibility == nil
+  def children_in_poverty(district, year, data_format, data)
+    {district => {:children_in_poverty => {year.to_i => data.to_f}}}
+  end
+
+  def lunch?(district, year, data, data_format, lunch_eligibility)
+   unless lunch_eligibility == nil
+    format_lunch_data(district, year, data, data_format, lunch_eligibility)
+   end
   end
 
   def format_lunch_data(district, year, data, data_format, lunch_eligibility)
     if data_format == "Percent"
-      lunch_data = {district => {lunch_eligibility.split.join("_").downcase.to_sym => {year.to_i => {:percentage => data.to_f}}}}
+      lunch_data = lunch_percentage(district, year, data, lunch_eligibility)
     elsif data_format == "Number"
-      lunch_data = {district => {lunch_eligibility.split.join("_").downcase.to_sym => {year.to_i => {:total => data.to_i}}}}
+      lunch_data = lunch_total(district, year, data, lunch_eligibility)
     end
     merge_lunch_eligibility(lunch_data)
     create_economic_profile(district)
+  end
+
+  def lunch_percentage(district, year, data, lunch)
+    {district => {lunch_key(lunch)=> {year.to_i => {:percentage => data.to_f}}}}
+  end 
+
+  def lunch_total(district, year, data, lunch)
+    {district => {lunch_key(lunch) => {year.to_i => {:total => data.to_i}}}}
+  end
+
+  def lunch_key(lunch_eligibility)
+    lunch_eligibility.split.join("_").downcase.to_sym
   end
 
   def title_i?(district, year, data)
@@ -90,7 +117,11 @@ module EconomicProfileParser
 
   def merge_lunch_eligibility(data_by_lunch)
     @parsed_data.merge!(data_by_lunch) do |district, old_lunch, new_lunch|
-      old_lunch.merge!(new_lunch){|s,o,n|o.merge!(n){|s,o,n|o.merge!(n)}.sort.to_h}
+      super_lunch_merge(old_lunch, new_lunch)
     end
+  end
+
+  def super_lunch_merge(old_lunch, new)
+    old_lunch.merge!(new){|s,o,n|o.merge!(n){|s,o,n|o.merge!(n)}.sort.to_h}
   end
 end

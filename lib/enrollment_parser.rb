@@ -34,7 +34,7 @@ module EnrollmentParser
   end
 
   def sort_enrollment(district_name)
-    if @filename.include?("Kindergartners")
+    if @filename.include?("kindergartners")
       enrollment_specs = {:name => district_name, :kindergarten_participation => @parsed_data[district_name].sort.to_h}
     elsif @filename.include?("High school")
       enrollment_specs = {:name => district_name, :high_school_graduation => @parsed_data[district_name].sort.to_h}

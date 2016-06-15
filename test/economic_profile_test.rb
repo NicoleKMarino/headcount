@@ -41,21 +41,21 @@ class EconomicProfileTest < Minitest::Test
     year = 1997
     expected_result = 0.035
 
-    assert expected_result, @ep.children_in_poverty(year)
+    assert expected_result, @ep.children_in_poverty_in_year(year)
   end
 
   def test_free_or_reduced_lunch_percentage_in_year
     year = 2001
     expected_result = 0.047
 
-    assert expected_result, @ep.free_or_reduced_lunch_percentage_in_year(year)
+    assert expected_result, @ep.free_or_reduced_price_lunch_percentage_in_year(year)
   end
 
   def test_free_or_reduced_lunch_number_in_year
     year = 2001
     expected_result = 805
 
-    assert expected_result, @ep.free_or_reduced_lunch_number_in_year(year)
+    assert expected_result, @ep.free_or_reduced_price_lunch_number_in_year(year)
   end
 
   def test_title_i_in_year

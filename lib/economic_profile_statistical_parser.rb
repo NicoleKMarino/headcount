@@ -1,4 +1,5 @@
 class EconomicProfileStatisticalParser
+
   def find_matching_ranges(median_income, year)
     covered_years = median_income.keys.find_all do |range|
       (range.first..range.last).cover?(year)
@@ -20,7 +21,7 @@ class EconomicProfileStatisticalParser
     end.reduce(:+) / covered_years.count
   end
 
-  def find_children_in_poverty(children_in_poverty, year)
+  def find_children(children_in_poverty, year)
     unless children_in_poverty[year] == nil
       truncate_float(children_in_poverty[year])
     else
@@ -28,7 +29,7 @@ class EconomicProfileStatisticalParser
     end
   end
 
-  def find_free_or_reduced_lunch_percentage(free_or_reduced_lunch, year)
+  def find_lunch_percentage(free_or_reduced_lunch, year)
     unless free_or_reduced_lunch[year] == nil
       truncate_float(free_or_reduced_lunch[year][:percentage])
     else
@@ -36,7 +37,7 @@ class EconomicProfileStatisticalParser
     end
   end
 
-  def find_free_or_reduced_lunch_number(free_or_reduced_lunch, year)
+  def find_lunch_number(free_or_reduced_lunch, year)
     unless free_or_reduced_lunch[year] == nil
       truncate_float(free_or_reduced_lunch[year][:total])
     else
