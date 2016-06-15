@@ -33,12 +33,24 @@ module EnrollmentParser
     end
   end
 
-  def sort_enrollment(district_name)
-    if @filename.include?("kindergartners")
-      enrollment_specs = {:name => district_name, :kindergarten_participation => @parsed_data[district_name].sort.to_h}
+  def sort_enrollment(district)
+    if @filename.include?("Kindergartners")
+      enrollment_specs = kindergarten_spec(district)
     elsif @filename.include?("High school")
-      enrollment_specs = {:name => district_name, :high_school_graduation => @parsed_data[district_name].sort.to_h}
+      enrollment_specs = graduation_spec(district)
     end
-    create_enrollment(district_name, enrollment_specs)
+    create_enrollment(district, enrollment_specs)
+  end
+
+  def kindergarten_spec(district)
+   {:name => district, :kindergarten_participation => format_instance(district)}
+  end
+
+  def graduation_spec(district)
+    {:name => district, :high_school_graduation => format_instance(district)}
+  end
+
+  def format_instance(district)
+    @parsed_data[district].sort.to_h
   end
 end

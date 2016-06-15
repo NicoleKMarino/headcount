@@ -37,7 +37,14 @@ class StatewideTest
   end
 
   def proficient_for_subject_by_grade_in_year(subject, grade, year)
-    proficient_by_grade(grade)[year][subject]
+    bad_data_check(subject, grade, year)
   end
 
+  def bad_data_check(subject, grade, year)
+    unless proficient_by_grade(grade)[year][subject] == 0.0
+      proficient_by_grade(grade)[year][subject]
+    else
+      "N/A"
+    end
+  end
 end

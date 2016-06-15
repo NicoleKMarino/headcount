@@ -28,12 +28,12 @@ class EconomicProfile
   end
 
   def free_or_reduced_price_lunch_percentage_in_year(year)
-    lunch_percentage = @economic_data[:eligible_for_free_or_reduced_lunch]
+    lunch_percentage = @economic_data[:free_or_reduced_price_lunch]
     @profile_parser.find_lunch_percentage(lunch_percentage, year)
   end
 
   def free_or_reduced_price_lunch_number_in_year(year)
-    lunch_number = @economic_data[:eligible_for_free_or_reduced_lunch]
+    lunch_number = @economic_data[:free_or_reduced_price_lunch]
     @profile_parser.find_lunch_number(lunch_number, year)
   end
 

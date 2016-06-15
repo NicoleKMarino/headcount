@@ -40,14 +40,18 @@ module StatewideParser
 
   def sort_statewide_tests(district, ethnicity, subject, year, percent)
     if ethnicity == nil
-      data_by_district = {district => {subject.downcase.to_sym => {year => percent}}}
-      merge_statewide_data(data_by_district)
+      subject_data = format_subjects(district, subject, year, percent)
+      merge_statewide_data(subject_data)
       format_grade_test(district)
     else
       ethnic_data = format_ethnic_categories(district, ethnicity, year, percent)
       merge_statewide_data(ethnic_data)
       format_ethnicity_test(district)
     end
+  end
+
+  def format_subjects(district, subject, year, percent)
+    {district => {subject.downcase.to_sym => {year => percent}}}
   end
 
   def format_ethnic_categories(district, ethnicity, year, percent)

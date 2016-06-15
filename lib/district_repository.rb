@@ -37,7 +37,6 @@ class DistrictRepository
       district.enrollment = enrollment_data
       districts[enrollment_data.name] = district
     end
-    binding.pry
   end
 
   def create_statewide_tests(statewide_tests)
@@ -50,7 +49,6 @@ class DistrictRepository
     economic_profiles.each do |district, economic_profile|
       find_by_name(district).economic_profile = economic_profile
     end
-    binding.pry
   end
 
   def find_by_name(district_name)
