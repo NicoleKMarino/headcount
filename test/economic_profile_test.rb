@@ -30,4 +30,38 @@ class EconomicProfileTest < Minitest::Test
     expected_result = (89615 + 89953/ 2)
     assert expected_result, @ep.median_household_income_in_year(year)
   end
+  
+  def test_median_household_income_avg
+    expected_result = ((85060 + 85450 + 89615 + 88099 + 89953) / 5)
+
+    assert expected_result, @ep.median_household_income_average
+  end
+
+  def test_children_in_poverty
+    year = 1997
+    expected_result = 0.035
+
+    assert expected_result, @ep.children_in_poverty(year)
+  end
+
+  def test_free_or_reduced_lunch_percentage_in_year
+    year = 2001
+    expected_result = 0.047
+
+    assert expected_result, @ep.free_or_reduced_lunch_percentage_in_year(year)
+  end
+
+  def test_free_or_reduced_lunch_number_in_year
+    year = 2001
+    expected_result = 805
+
+    assert expected_result, @ep.free_or_reduced_lunch_number_in_year(year)
+  end
+
+  def test_title_i_in_year
+    year = 2012
+    expected_result = 0.01
+
+    assert expected_result, @ep.title_i_in_year(year)
+  end
 end

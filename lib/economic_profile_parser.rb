@@ -22,11 +22,11 @@ module EconomicProfileParser
     @filename = file
     @parsed_data = Hash.new
     contents = CSV.open(file, headers: true, header_converters: :symbol)
-    parse_statewide_data(contents)
+    parse_economic_data(contents)
   end
 
-  def parse_statewide_data(statewide_contents)
-    statewide_contents.each do |row|
+  def parse_economic_data(economic_contents)
+    economic_contents.each do |row|
       district = row[:location]
       year = row[:timeframe]
       data_format = row[:dataformat]
@@ -37,7 +37,6 @@ module EconomicProfileParser
       lunch_eligibility?(district, year, data, data_format, lunch_eligibility)
       title_i?(district, year, data)
     end
-    binding.pry
   end
 
   def household_income?(district, year, data)
@@ -45,7 +44,7 @@ module EconomicProfileParser
   end
 
   def format_household_income(district, year, data)
-    income = {district => {:median_household_income => {year.split("-").map(&:to_i) => data.to_f}}} 
+    income = {district => {:median_household_income => {year.split("-").map(&:to_i) => data.to_i}}} 
     merge_economic_information(income)
     create_economic_profile(district)
   end
@@ -90,8 +89,8 @@ module EconomicProfileParser
   end
 
   def merge_lunch_eligibility(data_by_lunch)
-    @parsed_data.merge!(data_by_lunch) do |district, old_data, new_data|
-      old_data.merge!(new_data){|s,o,n|o.merge!(n){|s,o,n|o.merge!(n)}.sort.to_h}
+    @parsed_data.merge!(data_by_lunch) do |district, old_lunch, new_lunch|
+      old_lunch.merge!(new_lunch){|s,o,n|o.merge!(n){|s,o,n|o.merge!(n)}.sort.to_h}
     end
   end
 end

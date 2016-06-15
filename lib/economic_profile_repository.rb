@@ -23,4 +23,8 @@ class EconomicProfileRepository
   def add_economic_profile(new_economic_profile)
     @economic_profiles.merge!(new_economic_profile)
   end
+
+  def find_by_name(district)
+    @economic_profiles[district]
+  end
 end

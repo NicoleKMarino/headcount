@@ -1,3 +1,4 @@
+require_relative 'economic_profile_repository'
 require_relative 'statewide_test_repository'
 require_relative 'enrollment_repository'
 require_relative 'district'
@@ -9,15 +10,24 @@ class DistrictRepository
   def initialize
     @er = EnrollmentRepository.new
     @sr = StatewideTestRepository.new
+    @epr = EconomicProfileRepository.new
   end
 
-  def load_data(enrollment_hash, statewide_hash=nil)
+  def load_data(enrollment_hash, statewide_hash=nil, economic_profile_files=nil)
     @er.load_data(enrollment_hash)
     create_districts(@er.enrollments)
-    unless statewide_hash == nil
-      @sr.load_data(statewide_hash)
-      create_statewide_tests(@sr.statewide_tests)
-    end
+    statewide_tests(statewide_hash) unless statewide_hash == nil
+    economic_profiles(economic_profile_files) unless economic_profile_files == nil
+  end
+
+  def statewide_tests(statewide_hash)
+    @sr.load_data(statewide_hash)
+    create_statewide_tests(@sr.statewide_tests)
+  end
+
+  def economic_profiles(economic_profile_files)
+    @epr.load_data(economic_profile_files)
+    create_economic_profiles(@epr.economic_profiles)
   end
 
   def create_districts(enrollments)
@@ -32,6 +42,12 @@ class DistrictRepository
   def create_statewide_tests(statewide_tests)
     statewide_tests.each do |district, statewide_proficiency|
       find_by_name(district).statewide_test = statewide_proficiency
+    end
+  end
+
+  def create_economic_profiles(economic_profiles)
+    economic_profiles.each do |district, economic_profile|
+      find_by_name(district).economic_profile = economic_profile
     end
     binding.pry
   end
