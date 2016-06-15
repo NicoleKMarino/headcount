@@ -1,5 +1,7 @@
+
+require_relative "../lib/district"
 require 'minitest/autorun'
-require "./lib/district"
+require 'minitest/pride'
 
 
 class DistrictTest < Minitest::Test

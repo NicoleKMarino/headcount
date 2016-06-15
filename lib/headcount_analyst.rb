@@ -12,7 +12,7 @@ class HeadcountAnalyst
   end
 
   def find_district_average(district)
-    district.enrollment.kindergarten_participation_by_year.values.reduce(:+) / district.enrollment.kindergarten_participation_by_year.length
+    average=district.enrollment.kindergarten_participation_by_year.values.reduce(:+) / district.enrollment.kindergarten_participation_by_year.length
   end
 
   def kindergarten_participation_rate_variation(district_name1, district_name2)
@@ -24,9 +24,9 @@ class HeadcountAnalyst
 
   def display_result(result)
     if result < 1
-      puts "there was no significant change"
+      return "there was no significant change"
     else
-      puts "There was a significant change"
+      return "There was a significant change"
     end
   end
 
@@ -48,24 +48,6 @@ def truncate_float(float)
   end
 end
 
-
-def graduation_rate_by_year(district_name)
-  district = @dr.find_by_name(district_name)
-  @dr = district
-  district.enrollment.graduation_rate_by_year
-end
-
-def graduation_rate_in_year(year)
-  rates = @dr.enrollment.graduation_rate_by_year
-  rates.each do |key,value|
-    if key.to_i == year
-      return value
-    else
-      nil
-    end
-  end
-end
-
 def graduation_rate_average(district_name)
   district=@dr.find_by_name(district_name)
   all_pp= district.enrollment.graduation_rate_by_year
@@ -76,8 +58,10 @@ def kindergarten_participation_against_high_school_graduation(district_name)
   result = find_variations(district_name)
   if result.round == 1
     puts "There was a significant correlation"
+    return result
   else
     puts "There wasn't a significant correlation"
+    return result
   end
 end
 
@@ -131,11 +115,8 @@ end
 
 def find_variations(district_name)
   kindergarten_variation= district(district_name) / district("Colorado")
-  hs_variation=graduation_rate_average(district_name) / graduation_rate_average("Colorado")
-  result= kindergarten_variation/hs_variation
+  hs_variation = graduation_rate_average(district_name) / graduation_rate_average("Colorado")
+  result = kindergarten_variation/hs_variation
 end
 
 end
-
-ha=HeadcountAnalyst.new
-ha.kindergarten_participation_rate_variation_trend('ACADEMY 20','Colorado')

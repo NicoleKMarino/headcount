@@ -1,16 +1,23 @@
+require_relative 'statewide_repository'
+require_relative 'enrollment_repository'
+require_relative 'district'
+require_relative 'statewide_test'
 require 'pry'
-require "/Users/Nicole/Documents/mod1/headcount/lib/enrollment_repository.rb"
-require "/Users/Nicole/Documents/mod1/headcount/lib/district.rb"
 
 class DistrictRepository
-  attr_reader :districts
+  attr_reader :districts, :statewide_tests
   def initialize
     @er = EnrollmentRepository.new
+    @sr = StatewideRepository.new
   end
 
-  def load_data(enrollment_hash)
+  def load_data(enrollment_hash, statewide_hash=nil)
     @er.load_data(enrollment_hash)
     create_districts(@er.enrollments)
+    unless statewide_hash == nil
+      @sr.load_data(statewide_hash)
+      create_statewide_tests(@sr.statewide_tests)
+    end
   end
 
   def create_districts(enrollments)
@@ -22,11 +29,19 @@ class DistrictRepository
     end
   end
 
+  def create_statewide_tests(statewide_tests)
+    statewide_tests.each do |district, statewide_proficiency|
+      find_by_name(district).statewide_test = statewide_proficiency
+    end
+  end
+
   def find_by_name(district_name)
     if district_name.class == Hash
       sort_request(district_name)
-    else
+    elsif district_name == "Colorado"
       @districts[district_name]
+    else
+      @districts[district_name.upcase]
     end
   end
 
