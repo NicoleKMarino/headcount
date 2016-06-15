@@ -29,6 +29,7 @@ class DistrictRepositoryTest < Minitest::Test
   end
 
   def test_can_load_multiple_files
+    skip
     dr = DistrictRepository.new
     dr.load_data({:enrollment => {:kindergarten =>'./test/test_kindergartners_in_full_day_program.csv',
                                   :high_school_graduation => './data/High school graduation rates.csv'}},
@@ -42,7 +43,6 @@ class DistrictRepositoryTest < Minitest::Test
   end
 
   def test_can_load_economic_profiles
-    skip
     dr = DistrictRepository.new
     dr.load_data({:enrollment => {:kindergarten =>'./data/Kindergartners in full-day program.csv',
                                   :high_school_graduation => './data/High school graduation rates.csv'}},

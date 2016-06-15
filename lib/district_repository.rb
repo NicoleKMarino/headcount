@@ -1,3 +1,4 @@
+require_relative 'result_entry'
 require_relative 'economic_profile_repository'
 require_relative 'statewide_test_repository'
 require_relative 'enrollment_repository'
@@ -49,6 +50,7 @@ class DistrictRepository
     economic_profiles.each do |district, economic_profile|
       find_by_name(district).economic_profile = economic_profile
     end
+    binding.pry
   end
 
   def find_by_name(district_name)
@@ -72,4 +74,5 @@ class DistrictRepository
       dstrct if dstrct.name.include?(district_fragment.upcase)
     end
   end
+
 end
