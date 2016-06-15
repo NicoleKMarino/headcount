@@ -26,7 +26,7 @@ class Enrollment
 
   def graduation_rate_by_year
     @enrollment_data[:high_school_graduation].reduce({}) do |result, grdtn|
-      result.merge({grdtn.first => truncate_float(grdtn_by_year.last)})
+      result.merge({grdtn.first => truncate_float(grdtn.last)})
     end
   end
 
