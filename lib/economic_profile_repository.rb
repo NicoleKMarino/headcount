@@ -12,7 +12,7 @@ class EconomicProfileRepository
   end
 
   def create_economic_profile(district)
-    new_economic_profile = {district => EconomicProfile.new(@parsed_data[district])}
+    new_economic_profile = {district => EconomicProfile.new(@parsed_data[district].merge!({:name => district}))}
     unless @economic_profiles[district] == nil
       @economic_profiles[district].append_economic_data(new_economic_profile[district])
     else
