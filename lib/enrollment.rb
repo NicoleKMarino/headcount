@@ -2,20 +2,20 @@ require 'pry'
 
 
 class Enrollment
-  attr_reader :name, :enrollment_data_by_district
+  attr_reader :name, :enrollment_data
 
   def initialize(enrollment_data_by_district)
-    @name = enrollment_data_by_district.dig(:name)
-    @enrollment_data_by_district = enrollment_data_by_district
+    @enrollment_data = enrollment_data_by_district
+    @name = @enrollment_data[:name]
   end
 
   def append_enrollment_data(conflicting_district)
-    @enrollment_data_by_district.merge!(conflicting_district.enrollment_data_by_district)
+    @enrollment_data.merge!(conflicting_district.enrollment_data)
   end
 
   def kindergarten_participation_by_year
-    @enrollment_data_by_district.dig(:kindergarten_participation).reduce({}) do |result,ptcptn_by_year|
-      result.merge({ptcptn_by_year.first => truncate_float(ptcptn_by_year.last)})
+    @enrollment_data[:kindergarten_participation].reduce({}) do |result,ptcptn|
+      result.merge({ptcptn.first => truncate_float(ptcptn.last)})
     end
   end
 
@@ -24,16 +24,16 @@ class Enrollment
   end
 
   def kindergarten_participation_in_year(year)
-    truncate_float(@enrollment_data_by_district.dig(:kindergarten_participation)[year])
+    truncate_float(@enrollment_data.dig(:kindergarten_participation)[year])
   end
 
   def graduation_rate_by_year
-    @enrollment_data_by_district.dig(:high_school_graduation).reduce({}) do |result, graduation_by_year|
-      result.merge({graduation_by_year.first => truncate_float(graduation_by_year.last)})
+    @enrollment_data[:high_school_graduation].reduce({}) do |result, grdtn|
+      result.merge({grdtn.first => truncate_float(grdtn.last)})
     end
   end
 
   def graduation_rate_in_year(year)
-    truncate_float(@enrollment_data_by_district.dig(:high_school_graduation)[year])
+    truncate_float(@enrollment_data.dig(:high_school_graduation)[year])
   end
 end

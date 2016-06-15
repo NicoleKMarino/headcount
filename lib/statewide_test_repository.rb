@@ -10,6 +10,7 @@ class StatewideTestRepository
   end
 
   def load_data(statewide_hash)
+    @parsed_data = Hash.new
     assert_files(statewide_hash)
   end
 

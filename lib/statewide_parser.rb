@@ -36,22 +36,30 @@ module StatewideParser
       percent = row[:data].to_f
       sort_statewide_tests(district, ethnicity, subject, year, percent)
     end
-    binding.pry
   end
 
   def sort_statewide_tests(district, ethnicity, subject, year, percent)
     if ethnicity == nil
-      data_by_district = {district => {subject.downcase.to_sym => {year => percent}}}
-      merge_statewide_data(data_by_district)
+      subject_data = format_subjects(district, subject, year, percent)
+      merge_statewide_data(subject_data)
       format_grade_test(district)
     else
-      merge_statewide_data(format_ethnic_categories(district, ethnicity, year, percent))
+      ethnic_data = format_ethnic_categories(district, ethnicity, year, percent)
+      merge_statewide_data(ethnic_data)
       format_ethnicity_test(district)
     end
   end
 
+  def format_subjects(district, subject, year, percent)
+    {district => {subject.downcase.to_sym => {year => percent}}}
+  end
+
   def format_ethnic_categories(district, ethnicity, year, percent)
-    data_by_district = {district => {ethnicity.gsub(" ", "_").split("/").last.downcase.to_sym => {year => percent}}}
+    {district => {ethnicity_key_format(ethnicity) => {year => percent}}}
+  end
+
+  def ethnicity_key_format(ethnicity)
+    ethnicity.gsub(" ","_").split("/").last.downcase.to_sym
   end
 
   def merge_statewide_data(data_by_district)
