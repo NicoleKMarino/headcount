@@ -7,7 +7,7 @@ class HeadcountAnalyst
   include ResultFormatter
   def initialize
     @dr = DistrictRepository.new
-    @enrollment=@dr.load_data({:enrollment => {:kindergarten =>'./data/kindergartners_in_full_day_program.csv',
+    @enrollment=@dr.load_data({:enrollment => {:kindergarten =>'./data/Kindergartners in full-day program.csv',
       :high_school_graduation => './data/High school graduation rates.csv'}},
       {:statewide_testing => {
         :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
