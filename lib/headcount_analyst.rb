@@ -8,7 +8,7 @@ require_relative "enrollment_repository"
 
 class HeadcountAnalyst
   include ResultFormatter
-  def initialize
+  def initialize(dr=nil)
     @dr = DistrictRepository.new
     @dr.load_data({:enrollment => {:kindergarten =>'./data/Kindergartners in full-day program.csv',
                                   :high_school_graduation => './data/High school graduation rates.csv'}},
@@ -180,9 +180,9 @@ class HeadcountAnalyst
 
    def kindergarten_variation(district)
      unless district == nil
-       dkin = @dr.find_by_name(district).enrollment.enrollment_data[:kindergarten_participation]
-       skin = @state.enrollment.enrollment_data[:kindergarten_participation]
-       calculate_average(dkin) / calculate_average(skin)
+       d_kin = @dr.find_by_name(district).enrollment.enrollment_data[:kindergarten_participation]
+       s_kin = @state.enrollment.enrollment_data[:kindergarten_participation]
+       calculate_average(d_kin) / calculate_average(s_kin)
      end
    end
 
@@ -226,5 +226,3 @@ class HeadcountAnalyst
      true if correlated > (@dr.districts.count * 0.7)
    end
 end
-ha = HeadcountAnalyst.new
-ha.kindergarten_participation_correlates_with_household_income(:across => ["ACADEMY 20", "YUMA SCHOOL DISTRICT 1"])

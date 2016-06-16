@@ -16,7 +16,6 @@ class StatewideTestTest < Minitest::Test
   end
 
   def test_sw_test_holds_multiple_grades
-    skip
     sw = StatewideTest.new({:third_grade => {:math => {2008 =>0.56, 2009 => 0.54, 2010 => 0.469, 2011 => 0.476},
                                              :reading => {2008 => 0.524, 2009 => 0.562, 2010 => 0.457, 2011 => 0.571},
                                              :writing => {2008 => 0.426, 2009 => 0.479, 2010 => 0.312, 2011 => 0.31}},
@@ -34,7 +33,6 @@ class StatewideTestTest < Minitest::Test
   end
 
   def test_proficient_by_ethnicity 
-    skip
     sw = StatewideTest.new({:third_grade => {:math => {2008 =>0.56, 2009 => 0.54, 2010 => 0.469, 2011 => 0.476},
                                              :reading => {2008 => 0.524, 2009 => 0.562, 2010 => 0.457, 2011 => 0.571},
                                              :writing => {2008 => 0.426, 2009 => 0.479, 2010 => 0.312, 2011 => 0.31}},
@@ -48,7 +46,6 @@ class StatewideTestTest < Minitest::Test
                             :writing => {:white => {2011 => 0.3462, 2012 => 0.2762, 2013 => 0.3388, 2014 => 0.3402},
                                          :black => {2011 => 0.2255, 2012 => 0.2162, 2013 => 0.2593, 2014 => 0.2182}}})
 
-
-
+    assert_equal 0.381, sw.proficient_for_subject_by_race_in_year(:math, :white, 2011)
   end
 end

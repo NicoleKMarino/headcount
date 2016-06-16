@@ -14,7 +14,6 @@ class EnrollmentRepositoryTest < Minitest::Test
   end
 
   def test_load_multiple_datas
-    skip
     enrollment_repo = EnrollmentRepository.new
 
     enrollment_repo.load_data({:enrollment =>

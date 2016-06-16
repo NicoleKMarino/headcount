@@ -5,7 +5,7 @@ require 'minitest/pride'
 class ResultEntryTest < Minitest::Test
   def setup
     @entry = ResultEntry.new({free_and_reduced_price_lunch_rate: 0.5,
-                             children_in_poverty: 0.25,
+                             children_in_poverty_rate: 0.25,
                              high_school_graduation_rate: 0.75,
                              median_household_income: 0.5})
 

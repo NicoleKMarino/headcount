@@ -4,6 +4,7 @@ require 'pry'
 
 class StatewideTest
   attr_reader :proficiency
+  attr_accessor :name
   def initialize(proficiency_by_district)
     @proficiency = proficiency_by_district
   end
