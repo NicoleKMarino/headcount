@@ -12,4 +12,5 @@ def test_has_name
   assert_equal test.name, "ACADEMY 20")
 end
 
+
 end
