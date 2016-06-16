@@ -26,5 +26,4 @@ class ResultSetTest < Minitest::Test
     assert_equal 0.2, @set.statewide_average.children_in_poverty_rate
     assert_equal 0.6, @set.statewide_average.high_school_graduation_rate
   end
-
 end

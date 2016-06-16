@@ -1,12 +1,28 @@
+require_relative 'result_entry'
+require_relative 'result_set'
+require_relative 'result_formatter'
 require 'pry'
 require_relative "district_repository"
 require_relative "enrollment_repository"
 
 
 class HeadcountAnalyst
+  include ResultFormatter
   def initialize
     @dr = DistrictRepository.new
-    @enrollment= @dr.load_data({:enrollment => {:kindergarten => './data/Kindergartners in full-day program.csv', :high_school_graduation => './data/High school graduation rates.csv'}})
+    @dr.load_data({:enrollment => {:kindergarten =>'./data/Kindergartners in full-day program.csv',
+                                  :high_school_graduation => './data/High school graduation rates.csv'}},
+                                  {:statewide_testing => {
+                    :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
+                    :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
+                    :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
+                    :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
+                    :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"}},
+    :economic_profile => {
+                    :median_household_income => "./data/Median household income.csv",
+                    :children_in_poverty => "./data/School-aged children in poverty.csv",
+                    :free_or_reduced_price_lunch => "./data/Students qualifying for free or reduced price lunch.csv",
+                    :title_i => "./data/Title I students.csv"})
   end
 
   def district(name)
@@ -14,68 +30,112 @@ class HeadcountAnalyst
   end
 
   def find_district_average(district)
-    district.enrollment.kindergarten_participation_by_year.values.reduce(:+) / district.enrollment.kindergarten_participation_by_year.length
+    average=district.enrollment.kindergarten_participation_by_year.values.reduce(:+) / district.enrollment.kindergarten_participation_by_year.length
   end
 
   def kindergarten_participation_rate_variation(district_name1, district_name2)
     district1 = district(district_name1)
     district2 = district(district_name2)
     result = district1 / district2
+    display_result(result)
   end
 
   def display_result(result)
     if result < 1
-      "there was no significant change"
+      return "there was no significant change"
     else
-      "There was a significant change"
+      return "There was a significant change"
     end
   end
 
-   def kindergarten_participation_rate_variation_trend(district_name1,district_name2)
-     district1 = @dr.find_by_name(district_name1)
-     district2 = @dr.find_by_name(district_name2)
-     percents1 = find_average_by_year(district1)
-     percents2 = find_average_by_year(district2)
-     yearly_difference = percents1.map do |key,value|
-       percents2value = percents2[key]
-       value/percents2value
+
+  def kindergarten_participation_rate_variation_trend(district_name1,district_name2)
+    district1 =@dr.find_by_name(district_name1)
+    district2 =@dr.find_by_name(district_name2)
+    percents1 = district1.enrollment.enrollment_data_by_district[:kindergarten_participation]
+    percents2= district2.enrollment.enrollment_data_by_district[:kindergarten_participation]
+    result = percents1.merge(percents2){|k, a_value, b_value| a_value/b_value }
+    answer= result.each do |k, v|
+    result[k] = truncate_float(v)
     end
-    puts yearly_difference
-   end
+  end
 
-   def graduation_rate_by_year(district_name)
-     district = @dr.find_by_name(district_name)
-     @dr = district
-     district.enrollment.graduation_rate_by_year
-   end
-
-   def graduation_rate_in_year(year)
-     rates = @dr.enrollment.graduation_rate_by_year
-     rates.each do |key,value|
-       if key.to_i == year
-        return value
-       else
-         nil
-       end
-     end
-   end
-
-   def graduation_rate_average(district_name)
-     district=@dr.find_by_name(district_name)
-     all_pp= district.enrollment.graduation_rate_by_year
-     all_pp.values.reduce(:+) / all_pp.length
-   end
-
-   def kindergarten_participation_against_high_school_graduation(district_name)
-     kindergarten_variation= district(district_name) / district("Colorado")
-     hs_variation=graduation_rate_average(district_name) / graduation_rate_average("Colorado")
-     result= kindergarten_variation/hs_variation
-     if result.round == 1
-       puts "There was a significant correlation"
-     else
-       puts "There wasn't a significant correlation"
+  def truncate_float(float)
+    unless float == nil
+      (float * 1000).floor / 1000.to_f
     end
-   end
+  end
+
+  def graduation_rate_average(district_name)
+    district=@dr.find_by_name(district_name)
+    all_pp= district.enrollment.graduation_rate_by_year
+    all_pp.values.reduce(:+) / all_pp.length
+  end
+
+  def kindergarten_participation_against_high_school_graduation(district_name)
+    result = find_variations(district_name)
+    if result.round == 1
+      puts "There was a significant correlation"
+      return result
+    else
+      puts "There wasn't a significant correlation"
+      return result
+    end
+  end
+
+  def find_statewide_correlation
+    correlations=[]
+    @dr.districts.each do |name,info|
+      result = find_variations(name)
+      if (0.6..1.5).cover?(result)
+        correlations.push("true")
+      else
+        correlations.push("false")
+      end
+    end
+    find_percentage(correlations)
+  end
+
+
+  def find_percentage(correlations)
+    result = correlations.count("true")/correlations.length.to_f
+    percent = result * 100
+    if percent > 70
+      return true
+    else
+      return false
+    end
+  end
+
+  def kindergarten_participation_correlates_with_high_school_graduation(district_name)
+    if district_name.include? "STATEWIDE"
+      find_statewide_correlation
+    elsif district_name.class == Array
+      find_variations_of_array(district_name)
+    else
+      result=find_variations(district_name)
+      if (0.6..1.5).cover?(result)
+        return true
+      else
+        return false
+      end
+    end
+  end
+
+  def find_variations_of_array(district_name)
+    correlations=[]
+    district_name.each do |district|
+      result = kindergarten_participation_correlates_with_high_school_graduation(district)
+      correlations.push(result)
+    end
+    find_percentage(correlations)
+  end
+
+  def find_variations(district_name)
+    kindergarten_variation= district(district_name) / district("Colorado")
+    hs_variation = graduation_rate_average(district_name) / graduation_rate_average("Colorado")
+    result = kindergarten_variation/hs_variation
+  end
 
    def find_statewide_correlation
      correlations = []
@@ -101,78 +161,9 @@ class HeadcountAnalyst
      end
    end
 
-  def find_matching_districts
-    @dr.districts.each do |name, district|
-      format_entry(district) if poverty_check?(district)
-    end
-  end
-  
-  def format_entry(district)
-    result = ResultEntry.new({:free_and_reduced_price_lunch => district_lunch_avg(district),
-                     :children_in_poverty => district_poverty_avg(district),
-                     :high_school_graduation_rate => district_grad_avg(district)}
-    append_matching_districts(result)
-  end
-
-  def append_matching_districts(result)
-    matching_districts << result
-  end
-
-  def pov_check?(district)
-    graduation?(district) if district_poverty_avg(district) > state_poverty_avg
-  end
-
-  def graduation?(district)
-    lunch?(district) if district_grad_avg(district) > state_grad_avg
-  end
-
-  def lunch?(district)
-    district_lunch_avg(district) > state_lunch_avg
-  end
-
-  def district_poverty_avg(district)
-    pov_children = district.economic_profile.economic_data[:children_in_poverty]
-    pov_children.values.reduce(:+) / pov.count
-  end
-
-  def state_poverty_avg
-    eligible_districts = @districts.find_all do |district|
-      district.last.economic_profile.economic_data[:children_in_poverty] == nil
-    end.to_h
-    calculate_state_poverty(eligible_districts)
-  end
-
-  def calculate_state_poverty(eligible_districts)
-    eligible_districts.reduce(0) do |sum, district|
-      poverty = district.last.economic_profile.economic_data[:children_in_poverty]
-      sum + (poverty.values.reduce(:+) / poverty.count)
-    end / var.count
-  end
-
-  def district_grad_avg(district_data)
-    grad = district_data.enrollment.enrollment_data[:high_school_graduation]
-    grad.values.reduce(:+) / grad.count
-  end
-
-  def state_grad_avg
-    state_graduation = @districts["Colorado"].enrollment.enrollment_data[:high_school_graduation]
-    state_graduation.values.reduce(:+) / state_graduation.count
-  end
-  
-
-  def district_lunch_avg(district)
-    lunch = district.economic_profile.economic_data[:eligible_for_free_or_reduced_lunch]
-    lunch.values.reduce(0) do |result, lunch|
-      result + lunch[:total]
-    end / lunch.count
-  end
-  
-  def state_lunch_avg
-    lunch = @districts["Colorado"].economic_profile.economic_data[:eligible_for_free_or_reduced_lunch]
-    lunch.values.reduce(0) do |result, lunch|
-      result + lunch[:total]
-    end / lunch.count
-  end
-
+   def high_poverty_and_high_school_graduation
+     find_matching_districts
+   end
 end
-end
+ha = HeadcountAnalyst.new
+ha.high_poverty_and_high_school_graduation
