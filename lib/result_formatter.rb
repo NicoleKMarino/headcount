@@ -130,4 +130,68 @@ module ResultFormatter
     @rs.statewide_average = st
   end
 
+   def high_poverty_and_high_school_graduation
+     find_poverty_and_hs_grad
+   end
+
+   def high_income_disparity
+     find_income_disparity
+   end
+
+   def kindergarten_participation_against_household_income(district)
+     @state = @dr.districts.shift.last if @state == nil
+     kindergarten_variation(district) / median_income_variation(district)
+   end
+
+   def median_income_variation(district)
+     median_income(@dr.find_by_name(district)).to_f / state_median_income.to_f
+   end
+
+   def kindergarten_variation(district)
+     unless district == nil
+       d_kin = @dr.find_by_name(district).enrollment.enrollment_data[:kindergarten_participation]
+       s_kin = @state.enrollment.enrollment_data[:kindergarten_participation]
+       calculate_average(d_kin) / calculate_average(s_kin)
+     end
+   end
+
+   def kindergarten_participation_correlates_with_household_income(district)
+     kp_and_hh_income_correlation_across_districts(district) if district.keys.include?(:across)
+     district = district[:for]
+     statewide_income_correlation if district == "STATEWIDE"
+     if (0.6..1.5).cover?(kindergarten_participation_against_household_income(district))
+       true
+     end
+   end
+
+   def kp_and_hh_income_correlation_across_districts(district)
+     districts = district[:across]
+     correlated_districts = districts.reduce([]) do |result, district|
+       result << kindergarten_participation_correlates_with_household_income({:for => district})
+     end
+     if correlated_districts.compact!.empty?
+       false
+     else
+       find_correlation_districts(correlated_districts)
+     end
+   end
+
+   def find_correlation_districts(correlated_districts)
+     correlated_districts.all?{|val|val == true}
+   end
+
+   def statewide_income_correlation
+     @state = @dr.districts.shift.last if @state == nil
+     correlated = 0
+     @dr.districts.each do |name, district|
+       if kindergarten_participation_correlates_with_household_income({:for => district.name})
+         correlated += 1
+       end
+     end
+     correlation_check?(correlated)
+   end
+
+   def correlation_check?(correlated)
+     true if correlated > (@dr.districts.count * 0.7)
+   end
 end
