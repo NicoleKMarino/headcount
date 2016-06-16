@@ -142,5 +142,4 @@ class HeadcountAnalyst
             end
           end
         end
-
 end
