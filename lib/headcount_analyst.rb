@@ -142,5 +142,4 @@ class HeadcountAnalyst
       end
     end
   end
->>>>>>> patrick_alt
 end
