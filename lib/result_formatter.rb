@@ -1,39 +1,38 @@
 module ResultFormatter
 
-  def find_matching_districts
+  def find_poverty_and_hs_grad
     @result_set = ResultSet.new({:matching_districts => [], :statewide_average => nil})
-    @state = @dr.districts.shift.last
+    @state = @dr.districts.shift.last if @state == nil
     @dr.districts.each do |name, district|
-      format_entry(district) if poverty_check?(district)
+      format_poverty_and_hs_graduation(district) if lunch?(district)
     end
   end
-  
-  def format_entry(district)
-    result = ResultEntry.new({:free_and_reduced_price_lunch_rate => district_lunch_avg(district),
-                     :children_in_poverty_rate => district_poverty_avg(district),
-                     :high_school_graduation_rate => district_grad_avg(district)})
-    result.name = district.name
-    append_matching_districts(result)
-  end
 
-  def poverty_check?(district)
-    graduation?(district) if district_poverty_avg(district) > state_poverty_avg
-  end
-
-  def graduation?(district)
-    lunch?(district) if district_grad_avg(district) > state_grad_avg
+  def find_income_disparity
+    @result_set = ResultSet.new({:matching_districts => [], :statewide_average => nil})
+    @state = @dr.districts.shift.last if @state == nil
+    @dr.districts.each do |name, district|
+      format_income_disparity(district) if median_income?(district)
+    end
   end
 
   def lunch?(district)
-    district_lunch_avg(district) > state_lunch_avg
+    graduation?(district) if lunch_avg(district) > state_lunch_avg
   end
 
-  def household_income?(district)
-    binding.pry
-    household_income(district) > household_income(@state) unless district.economic_profile.economic_data[:median_household_income] == nil
+  def graduation?(district)
+    poverty_check?(district) if grad_avg(district) > state_grad_avg
   end
 
-  def district_poverty_avg(district)
+  def median_income?(district)
+    poverty_check?(district) if median_income(district) > state_median_income
+  end
+
+  def poverty_check?(district)
+    poverty_avg(district) > state_poverty_avg
+  end
+
+  def poverty_avg(district)
     pov_children = district.economic_profile.economic_data[:children_in_poverty]
     unless pov_children == nil
       calculate_average(pov_children)
@@ -60,7 +59,7 @@ module ResultFormatter
     end
   end
 
-  def district_grad_avg(district)
+  def grad_avg(district)
     grad = district.enrollment.enrollment_data[:high_school_graduation]
     calculate_average(grad)
   end
@@ -71,7 +70,7 @@ module ResultFormatter
   end
   
 
-  def district_lunch_avg(district)
+  def lunch_avg(district)
     lunch = district.economic_profile.economic_data[:eligible_for_free_or_reduced_lunch]
     calculate_free_lunch(lunch)
   end
@@ -87,15 +86,49 @@ module ResultFormatter
     end / lunch_data.count
   end
 
-  def append_matching_districts(result)
-    @result_set.matching_districts << result
-    add_statewide_data
+  def median_income(district)
+    income = district.economic_profile.economic_data[:median_household_income]
+    calculate_average(income)
   end
 
-  def add_statewide_data
+  def state_median_income
+    income = @state.economic_profile.economic_data[:median_household_income]
+    calculate_average(income)
+  end
+
+  def append_matching_districts(result)
+    @result_set.matching_districts << result
+  end
+
+  def format_high_poverty_and_hs_graduation(district)
+    result = ResultEntry.new({:free_and_reduced_price_lunch_rate => lunch_avg(district),
+                     :children_in_poverty_rate => poverty_avg(district),
+                     :high_school_graduation_rate => grad_avg(district)})
+    result.name = district.name
+    append_matching_districts(result)
+    add_statewide_high_poverty_and_hs_graduation
+  end
+
+  def add_statewide_high_poverty_and_hs_graduation
     statewide = ResultEntry.new({:free_and_reduced_price_lunch_rate => state_lunch_avg,
                                  :children_in_poverty_rate => state_poverty_avg,
                                  :high_school_graduation_rate => state_grad_avg})
     @result_set.statewide_average = statewide
   end
+
+  def format_income_disparity(district)
+    result = ResultEntry.new({:children_in_poverty_rate => poverty_avg(district),
+                              :median_household_income => median_income(district)})
+    result.name = district.name
+    append_matching_districts(result)
+    add_statewide_income_disparity
+  end
+
+  def add_statewide_income_disparity
+    statewide = ResultEntry.new({:children_in_poverty_rate => state_poverty_avg,
+                              :median_household_income => state_median_income})
+    @result_set.statewide_average = statewide
+    binding.pry
+  end
+
 end
