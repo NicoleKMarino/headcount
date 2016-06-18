@@ -1,3 +1,4 @@
+require 'pry'
 module ResultFormatter
 
   def find_poverty_and_hs_grad
@@ -82,7 +83,7 @@ module ResultFormatter
 
   def calculate_free_lunch(lunch_data)
     lunch_data.values.reduce(0) do |result, lunch|
-      result + lunch[:percentage]
+      result + lunch[:percentage].to_f
     end / lunch_data.count
   end
 
