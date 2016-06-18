@@ -14,11 +14,11 @@ class DistrictRepository
     @epr = EconomicProfileRepository.new
   end
 
-  def load_data(enrollment_hash, statewide_hash=nil, economic_files=nil)
-    @er.load_data(enrollment_hash)
+  def load_data(repo_files)
+    @er.load_data(repo_files)
     create_districts(@er.enrollments)
-    statewide_tests(statewide_hash) unless statewide_hash == nil
-    economic_profiles(economic_files) unless economic_files == nil
+    statewide_tests(repo_files) unless repo_files[:statewide_testing] == nil
+    economic_profiles(repo_files) unless repo_files[:economic_profile] == nil
   end
 
   def statewide_tests(statewide_hash)

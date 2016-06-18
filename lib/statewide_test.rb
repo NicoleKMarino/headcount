@@ -29,23 +29,34 @@ class StatewideTest
       parser = ProficiencyParser.new
       parser.format_proficiency_by_ethnicity(@proficiency, race)
     else
-      raise UnknownRaceError
+      raise UnknownDataError
     end
   end
 
   def proficient_for_subject_by_race_in_year(subject, ethnicity, year)
-    proficient_by_race_or_ethnicity(ethnicity)[year][subject]
+    subject_inspect(subject)
+    score = proficient_by_race_or_ethnicity(ethnicity)[year][subject]
+    if score == nil
+      "N/A"
+    else
+      score
+    end
   end
 
   def proficient_for_subject_by_grade_in_year(subject, grade, year)
-    bad_data_check(subject, grade, year)
-  end
-
-  def bad_data_check(subject, grade, year)
-    unless proficient_by_grade(grade)[year][subject] == 0.0
-      proficient_by_grade(grade)[year][subject]
-    else
+    subject_inspect(subject)
+    score = proficient_by_grade(grade)[year][subject]
+    if score == nil
       "N/A"
+    else
+      score
     end
   end
+
+  def subject_inspect(subject)
+    unless [:math, :reading, :writing].any?{|sub|sub==subject}
+      proficient_by_grade(1)
+    end
+  end
+
 end
