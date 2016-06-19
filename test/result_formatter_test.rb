@@ -9,7 +9,7 @@ class ResultFormatterTest < Minitest::Test
     @dr = DistrictRepository.new
     @dr.load_data({:enrollment => {
                                   :high_school_graduation => './test/test_High school graduation rates.csv',
-                                  :kindergarten_participation => './test/test Kindergartners in full-day program.csv'},
+                                  :kindergarten => './test/test Kindergartners in full-day program.csv'},
     :economic_profile => {
                     :median_household_income => "./test/test_Median_household_income.csv",
                     :children_in_poverty => "./test/test_school_age_children_in_poverty.csv",
@@ -78,7 +78,7 @@ class ResultFormatterTest < Minitest::Test
     academy = "Academy 20"
 
     dummy_participation = ((0.7 * 6) + (0.8 * 5)) / (5 + 6)
-    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten_participation])
+    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten])
     kindergarten_var = dummy_participation / state_participation
 
     dummy_income = ((60000 * 3) + (70000 * 2)) / (3 + 2)
@@ -93,7 +93,7 @@ class ResultFormatterTest < Minitest::Test
     academy = "Academy 20"
 
     dummy_participation = ((0.7 * 6) + (0.8 * 5)) / (5 + 6)
-    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten_participation])
+    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten])
     kindergarten_var = dummy_participation / state_participation
 
     dummy_income = ((60000 * 3) + (70000 * 2)) / (3 + 2)
@@ -111,7 +111,7 @@ class ResultFormatterTest < Minitest::Test
 
     academy_participation = ((0.7 * 6) + (0.8 * 5)) / (5 + 6)
     adams_participation = ((0.3 * 6) + (0.2 * 5)) / (5 + 6)
-    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten_participation])
+    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten])
     academy_kindergarten_var = academy_participation / state_participation
     adams_kindergarten_var = adams_participation / state_participation
 

@@ -11,7 +11,7 @@ class Enrollment
   end
 
   def kindergarten_participation_by_year
-    @enrollment_data[:kindergarten_participation].reduce({}) do |result,ptcptn|
+    @enrollment_data[:kindergarten].reduce({}) do |result,ptcptn|
       result.merge({ptcptn.first => truncate_float(ptcptn.last)})
     end
   end
@@ -21,7 +21,7 @@ class Enrollment
   end
 
   def kindergarten_participation_in_year(year)
-    truncate_float(@enrollment_data.dig(:kindergarten_participation)[year])
+    truncate_float(@enrollment_data.dig(:kindergarten)[year])
   end
 
   def graduation_rate_by_year

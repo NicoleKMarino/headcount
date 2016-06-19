@@ -11,7 +11,7 @@ class EnrollmentRepository
   end
 
   def load_data(enrollment_data)
-    kindergarten_file = enrollment_data[:enrollment][:kindergarten_participation]
+    kindergarten_file = enrollment_data[:enrollment][:kindergarten]
     hs_graduation_file = enrollment_data[:enrollment][:high_school_graduation]
     sort_enrollment_request(kindergarten_file, hs_graduation_file)
   end

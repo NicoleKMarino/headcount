@@ -17,7 +17,11 @@ class HeadcountAnalyst
   end
 
   def find_district_average(district)
-    average=district.enrollment.kindergarten_participation_by_year.values.reduce(:+) / district.enrollment.kindergarten_participation_by_year.length
+    unless district.enrollment.enrollment_data[:kindergarten].empty?
+      average=district.enrollment.enrollment_data[:kindergarten].values.reduce(:+) / district.enrollment.enrollment_data[:kindergarten].length
+    else
+      0
+    end
   end
 
   def kindergarten_participation_rate_variation(district_name1, district_name2)
@@ -38,8 +42,8 @@ class HeadcountAnalyst
   def kindergarten_participation_rate_variation_trend(district_name1,district_name2)
     district1 =@dr.find_by_name(district_name1)
     district2 =@dr.find_by_name(district_name2)
-    percents1 = district1.enrollment.enrollment_data[:kindergarten_participation]
-    percents2= district2.enrollment.enrollment_data[:kindergarten_participation]
+    percents1 = district1.enrollment.enrollment_data[:kindergarten]
+    percents2= district2.enrollment.enrollment_data[:kindergarten]
     merge_results(percents1,percents2)
   end
 
@@ -59,8 +63,12 @@ class HeadcountAnalyst
 
   def graduation_rate_average(district_name)
     district=@dr.find_by_name(district_name)
-    all_pp= district.enrollment.graduation_rate_by_year
-    result = all_pp.values.reduce(:+) / all_pp.length
+    unless district.enrollment.enrollment_data[:high_school_graduation].empty?
+      all_pp= district.enrollment.enrollment_data[:high_school_graduation]
+      result = all_pp.values.reduce(:+) / all_pp.length
+    else
+      0
+    end
   end
 
   def kindergarten_participation_against_high_school_graduation(district_name)
@@ -69,9 +77,9 @@ class HeadcountAnalyst
 
 
   def kindergarten_participation_correlates_with_high_school_graduation(district_name)
-    if district_name.include? "STATEWIDE"
+    if district_name == {:for => "STATEWIDE"}
       result = statewide_correlation
-    elsif district_name.class == Array
+    elsif district_name.is_a?(Hash) && district_name[:across].is_a?(Array)
       find_variations_of_array(district_name)
     else
       result= find_variations(district_name)
@@ -84,21 +92,22 @@ class HeadcountAnalyst
   end
 
   def statewide_correlation
-    correlations=[]
     @dr.districts.each do |name,info|
+    correlations=[]
       result = find_variations(name)
       if (0.6..1.5).cover?(result)
         correlations.push("true")
       else
         correlations.push("false")
       end
-    end
     find_percentage(correlations)
   end
+  end
+
 
   def find_variations_of_array(district_name)
     correlations=[]
-    district_name.each do |district|
+    district_name[:across].each do |district|
       result = kindergarten_participation_correlates_with_high_school_graduation(district)
       correlations.push(result)
     end
@@ -116,6 +125,7 @@ class HeadcountAnalyst
   end
 
   def find_variations(district_name)
+    district_name = district_name[:for] if district_name.is_a?(Hash)
     kindergarten_variation = district(district_name)/district("Colorado")
     hs_variation = graduation_rate_average(district_name) / graduation_rate_average("Colorado")
     result = kindergarten_variation/hs_variation

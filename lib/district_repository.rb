@@ -12,6 +12,7 @@ class DistrictRepository
     @er = EnrollmentRepository.new
     @sr = StatewideTestRepository.new
     @epr = EconomicProfileRepository.new
+    @districts = Hash.new
   end
 
   def load_data(repo_files)
@@ -32,7 +33,6 @@ class DistrictRepository
   end
 
   def create_districts(enrollments)
-    @districts = Hash.new
     enrollments.each do |district, enrollment_data|
       district = District.new({:name => enrollment_data.name})
       district.enrollment = enrollment_data

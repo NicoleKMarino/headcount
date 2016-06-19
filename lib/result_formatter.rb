@@ -150,8 +150,8 @@ module ResultFormatter
 
    def kindergarten_variation(district)
      unless district == nil
-       d_kin = @dr.find_by_name(district).enrollment.enrollment_data[:kindergarten_participation]
-       s_kin = @state.enrollment.enrollment_data[:kindergarten_participation]
+       d_kin = @dr.find_by_name(district).enrollment.enrollment_data[:kindergarten]
+       s_kin = @state.enrollment.enrollment_data[:kindergarten]
        calculate_average(d_kin) / calculate_average(s_kin)
      end
    end
