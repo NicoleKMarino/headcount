@@ -20,7 +20,7 @@ class HeadcountAnalyst
     unless district.enrollment.enrollment_data[:kindergarten].empty?
       average=district.enrollment.enrollment_data[:kindergarten].values.reduce(:+) / district.enrollment.enrollment_data[:kindergarten].length
     else
-      0
+      "N/A"
     end
   end
 
@@ -67,7 +67,7 @@ class HeadcountAnalyst
       all_pp= district.enrollment.enrollment_data[:high_school_graduation]
       result = all_pp.values.reduce(:+) / all_pp.length
     else
-      0
+      "N/A"
     end
   end
 
@@ -79,6 +79,7 @@ class HeadcountAnalyst
   def kindergarten_participation_correlates_with_high_school_graduation(district_name)
     if district_name == {:for => "STATEWIDE"}
       result = statewide_correlation
+      calculate_statewide_range(result)
     elsif district_name.is_a?(Hash) && district_name[:across].is_a?(Array)
       find_variations_of_array(district_name)
     else
@@ -94,16 +95,27 @@ class HeadcountAnalyst
   def statewide_correlation
     @dr.districts.each do |name,info|
     correlations=[]
-      result = find_variations(name)
-      if (0.6..1.5).cover?(result)
-        correlations.push("true")
-      else
-        correlations.push("false")
-      end
-    find_percentage(correlations)
-  end
+    result = find_variations(name)
+    locate_statewide_correlated_districts(result, correlations) unless result == "N/A"
+    end
   end
 
+  def locate_statewide_correlated_districts(result, correlations)
+    if (0.6..1.5).cover?(result)
+      correlations.push("true")
+    else
+      correlations.push("false")
+    end
+  find_percentage(correlations)
+  end
+
+  def calculate_statewide_range(result)
+    if result.count < (180 * 0.7)
+      true
+    else
+      false
+    end
+  end
 
   def find_variations_of_array(district_name)
     correlations=[]
@@ -126,9 +138,12 @@ class HeadcountAnalyst
 
   def find_variations(district_name)
     district_name = district_name[:for] if district_name.is_a?(Hash)
-    kindergarten_variation = district(district_name)/district("Colorado")
-    hs_variation = graduation_rate_average(district_name) / graduation_rate_average("Colorado")
-    result = kindergarten_variation/hs_variation
+    unless district(district_name) == "N/A" || graduation_rate_average(district_name) == "N/A"
+      kindergarten_variation = district(district_name)/district("Colorado")
+      hs_variation = graduation_rate_average(district_name) / graduation_rate_average("Colorado")
+    else
+      "N/A"
+    end
   end
 
   def find_statewide_correlation
