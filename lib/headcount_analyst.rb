@@ -7,7 +7,7 @@ require_relative '../lib/result_formatter'
 
 class HeadcountAnalyst
   include ResultFormatter
-  attr_reader :rs
+  attr_reader :rs, :state
   def initialize(dr)
     @dr = dr
   end

@@ -157,20 +157,30 @@ module ResultFormatter
    end
 
    def kindergarten_participation_correlates_with_household_income(district)
-     kp_and_hh_income_correlation_across_districts(district) if district.keys.include?(:across)
-     district = district[:for]
-     statewide_income_correlation if district == "STATEWIDE"
+    if district.keys.include?(:across)
+     kp_and_hh_income_correlation_across_districts(district[:across])
+    elsif district[:for] == "STATEWIDE"
+     statewide_income_correlation
+    else
+      kindergarten_vs_household_income_correlation(district[:for])
+    end
+   end
+
+   def kindergarten_vs_household_income_correlation(district)
      if (0.6..1.5).cover?(kindergarten_participation_against_household_income(district))
        true
      end
    end
 
-   def kp_and_hh_income_correlation_across_districts(district)
-     districts = district[:across]
+   def kp_and_hh_income_correlation_across_districts(districts)
      correlated_districts = districts.reduce([]) do |result, district|
        result << kindergarten_participation_correlates_with_household_income({:for => district})
      end
-     if correlated_districts.compact!.empty?
+     correlation_confirmation(correlated_districts)
+   end
+
+   def correlation_confirmation(correlated_districts)
+     if correlated_districts.compact.empty?
        false
      else
        find_correlation_districts(correlated_districts)
@@ -185,7 +195,7 @@ module ResultFormatter
      @state = @dr.districts.shift.last if @state == nil
      correlated = 0
      @dr.districts.each do |name, district|
-       if kindergarten_participation_correlates_with_household_income({:for => district.name})
+       if kindergarten_participation_correlates_with_household_income({:for => name})
          correlated += 1
        end
      end

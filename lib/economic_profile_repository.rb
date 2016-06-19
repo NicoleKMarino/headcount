@@ -7,8 +7,8 @@ class EconomicProfileRepository
     @economic_profiles = Hash.new
   end
 
-  def load_data(ugly_hash)
-    assert_files(ugly_hash.dig(:economic_profile))
+  def load_data(raw_data)
+    assert_files(raw_data.dig(:economic_profile))
   end
 
   def create_economic_profile(district)
