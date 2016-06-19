@@ -10,9 +10,9 @@ module EnrollmentParser
   end
 
   def open_csv(filename)
-    @filename = filename
+    @filename = filename 
     @parsed_data = Hash.new
-    contents = CSV.open(filename, headers: true, header_converters: :symbol)
+    contents = CSV.open(@filename, headers: true, header_converters: :symbol)
     parse_enrollments(contents)
   end
 
