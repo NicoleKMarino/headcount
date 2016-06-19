@@ -38,6 +38,7 @@ class DistrictRepository
       district.enrollment = enrollment_data
       districts[enrollment_data.name] = district
       bad_data_swap(district.enrollment.enrollment_data)
+      @districts[enrollment_data.name] = district
     end
   end
 
@@ -114,7 +115,7 @@ class DistrictRepository
   def sort_request(district_name)
     if district_name.keys.first == :against
       find_by_name(district_name.dig(:against).upcase)
-    end 
+    end
   end
 
   def find_all_matching(district_fragment)
