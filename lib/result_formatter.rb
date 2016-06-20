@@ -1,9 +1,68 @@
 require 'pry'
 module ResultFormatter
+  def kindergarten_participation_against_high_school_graduation(district)
+    kinder = kindergarten_variation(district)
+    grad = grad_avg(@dr.find_by_name(district)) / state_grad_avg
+    kinder / grad 
+  end
 
+  def kinder_grad_correlation_confirmation(kinder_grad_correlation)
+    if (0.6..1.5).cover?(kinder_grad_correlation)
+      true
+    else
+      false
+    end
+  end
+
+  def kindergarten_participation_correlates_with_high_school_graduation(district)
+    if district == {:for => "STATEWIDE"}
+      statewide_correlation_check
+    elsif district.is_a?(Hash) && district[:across].is_a?(Array)
+      subset_correlation_check(district)
+    else
+      single_district_correlation_check(district[:for])
+    end
+  end
+
+  def single_district_correlation_check(district)
+    if kindergarten_variation(district)
+      kinder_ptcptn_vs_hs_grad = kindergarten_participation_against_high_school_graduation(district)
+      kinder_grad_correlation_confirmation(kinder_ptcptn_vs_hs_grad)
+    end
+  end
+
+  def subset_correlation_check(subset)
+    qualifying_districts = 0
+    subset[:across].each do |district|
+      if single_district_correlation_check(district)
+        qualifying_districts += 1
+      end
+    end
+    statewide_correlation_confirmation(qualifying_districts)
+  end
+
+  def statewide_correlation_check
+    qualifying_districts = 0
+    @state = @dr.districts.shift.last if @state.nil?
+    @dr.districts.each do |name, information|
+    if single_district_correlation_check(name)
+      qualifying_districts += 1 
+    end
+    end
+    statewide_correlation_confirmation(qualifying_districts)
+  end
+
+  def statewide_correlation_confirmation(qualifying_districts)
+    if qualifying_districts > (180 * 0.7)
+      true
+    else
+      false
+    end
+  end
+    
   def find_poverty_and_hs_grad
     @rs = ResultSet.new({:matching_districts => [], :statewide_average => nil})
-    @state = @dr.districts.shift.last if @state == nil
+    @state = @dr.districts.shift.last if @state.nil?
     @dr.districts.each do |name, district|
       format_high_poverty_and_hs_graduation(district) if lunch?(district)
     end
@@ -11,7 +70,7 @@ module ResultFormatter
 
   def find_income_disparity
     @rs = ResultSet.new({:matching_districts => [], :statewide_average => nil})
-    @state = @dr.districts.shift.last if @state == nil
+    @state = @dr.districts.shift.last if @state.nil?
     @dr.districts.each do |name, district|
       format_income_disparity(district) if median_income?(district)
     end
@@ -35,13 +94,15 @@ module ResultFormatter
 
   def poverty_avg(district)
     pov_children = district.economic_profile.economic_data[:children_in_poverty]
-    unless pov_children == nil
+    unless pov_children.nil?
       calculate_average(pov_children)
     end
   end
   
   def calculate_average(district_data)
-    district_data.values.reduce(:+) / district_data.count
+    unless district_data.values.empty?
+      district_data.values.reduce(:+) / district_data.count
+    end
   end
 
   def state_poverty_avg
@@ -66,6 +127,7 @@ module ResultFormatter
   end
 
   def state_grad_avg
+    @state = @dr.districts.shift.last if @state.nil?
     state_graduation = @state.enrollment.enrollment_data[:high_school_graduation]
     calculate_average(state_graduation)
   end
@@ -77,7 +139,7 @@ module ResultFormatter
   end
   
   def state_lunch_avg
-    lunch = @state.economic_profile.economic_data[:eligible_for_free_or_reduced_lunch]
+    lunch = economic_profile.economic_data[:eligible_for_free_or_reduced_lunch]
     calculate_free_lunch(lunch)
   end
 
@@ -140,8 +202,8 @@ module ResultFormatter
    end
 
    def kindergarten_participation_against_household_income(district)
-     @state = @dr.districts.shift.last if @state == nil
-     kindergarten_variation(district) / median_income_variation(district)
+     @state = @dr.districts.shift.last if @state.nil?
+     kindergarten_variation(district) / median_income_variation(district) unless kindergarten_variation(district).nil?
    end
 
    def median_income_variation(district)
@@ -149,11 +211,10 @@ module ResultFormatter
    end
 
    def kindergarten_variation(district)
-     unless district == nil
-       d_kin = @dr.find_by_name(district).enrollment.enrollment_data[:kindergarten]
-       s_kin = @state.enrollment.enrollment_data[:kindergarten]
-       calculate_average(d_kin) / calculate_average(s_kin)
-     end
+     @state = @dr.districts.shift.last if @state.nil?
+     d_kin = @dr.find_by_name(district).enrollment.enrollment_data[:kindergarten]
+     s_kin = @state.enrollment.enrollment_data[:kindergarten]
+     calculate_average(d_kin) / calculate_average(s_kin) unless d_kin.empty?
    end
 
    def kindergarten_participation_correlates_with_household_income(district)
@@ -167,7 +228,7 @@ module ResultFormatter
    end
 
    def kindergarten_vs_household_income_correlation(district)
-     if (0.6..1.5).cover?(kindergarten_participation_against_household_income(district))
+     if (0.6..1.5).cover?(kindergarten_participation_against_household_income(district)).to_f
        true
      end
    end
@@ -192,7 +253,7 @@ module ResultFormatter
    end
 
    def statewide_income_correlation
-     @state = @dr.districts.shift.last if @state == nil
+     @state = @dr.districts.shift.last if @state.nil?
      correlated = 0
      @dr.districts.each do |name, district|
        if kindergarten_participation_correlates_with_household_income({:for => name})

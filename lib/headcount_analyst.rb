@@ -71,27 +71,6 @@ class HeadcountAnalyst
     end
   end
 
-  def kindergarten_participation_against_high_school_graduation(district_name)
-    result = find_variations(district_name)
-  end
-
-
-  def kindergarten_participation_correlates_with_high_school_graduation(district_name)
-    if district_name == {:for => "STATEWIDE"}
-      result = statewide_correlation
-      calculate_statewide_range(result)
-    elsif district_name.is_a?(Hash) && district_name[:across].is_a?(Array)
-      find_variations_of_array(district_name)
-    else
-      result= find_variations(district_name)
-      if (0.6..1.5).cover?(result)
-        true
-      else
-        false
-      end
-    end
-  end
-
   def statewide_correlation
     @dr.districts.each do |name,info|
     correlations=[]
