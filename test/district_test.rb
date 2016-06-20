@@ -16,7 +16,7 @@ class DistrictTest < Minitest::Test
 
   def test_district_has_enrollments
     dr = DistrictRepository.new
-    dr.load_data({:enrollment => {:kindergarten_participation => './data/Kindergartners in full-day program.csv'}})
+    dr.load_data({:enrollment => {:kindergarten => './data/Kindergartners in full-day program.csv'}})
 
     district = dr.find_by_name("Academy 20")
 
@@ -26,7 +26,7 @@ class DistrictTest < Minitest::Test
 
   def test_district_has_statewide_tests
     dr = DistrictRepository.new
-    dr.load_data({:enrollment => {:kindergarten_participation =>'./data/Kindergartners in full-day program.csv',
+    dr.load_data({:enrollment => {:kindergarten =>'./data/Kindergartners in full-day program.csv',
                                   :high_school_graduation => './data/High school graduation rates.csv'},
                                   :statewide_testing => {
                     :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
@@ -43,7 +43,7 @@ class DistrictTest < Minitest::Test
 
   def test_district_has_economic_profile
     dr = DistrictRepository.new
-    dr.load_data({:enrollment => {:kindergarten_participation =>'./data/Kindergartners in full-day program.csv',
+    dr.load_data({:enrollment => {:kindergarten =>'./data/Kindergartners in full-day program.csv',
                                   :high_school_graduation => './data/High school graduation rates.csv'},
                                   :statewide_testing => {
                     :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",

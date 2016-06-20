@@ -37,68 +37,21 @@ class DistrictRepository
       district = District.new({:name => enrollment_data.name})
       district.enrollment = enrollment_data
       districts[enrollment_data.name] = district
-      bad_data_swap(district.enrollment.enrollment_data)
       @districts[enrollment_data.name] = district
     end
   end
 
-  def bad_data_swap(district_data)
-    district_data.each do |category, stat|
-      extract_bad_data(category, stat) if stat.class == Hash
-    end
-  end
-
-  def extract_bad_data(category, stat)
-    stat.delete_if do |year, percent|
-      percent == 0.0
-    end
-  end
 
   def create_statewide_tests(statewide_tests)
     statewide_tests.each do |district, statewide_proficiency|
-      bad_state_data_swap(statewide_proficiency.proficiency)
       find_by_name(district).statewide_test = statewide_proficiency
       find_by_name(district).statewide_test.name = district
     end
   end
 
-  def bad_state_data_swap(district_data)
-    district_data.each do |category, data|
-      extract_bad_state_data(category, data) if data.class == Hash
-    end
-  end
-
-  def extract_bad_state_data(category, data)
-    data.each do |subject, scores_by_year|
-      scores_by_year.delete_if{|yr,pct|pct==0.0}
-    end
-  end
-
-
   def create_economic_profiles(economic_profiles)
     economic_profiles.each do |district, economic_profile|
-      bad_econ_data_swap(economic_profile.economic_data)
       find_by_name(district).economic_profile = economic_profile
-    end
-  end
-
-  def bad_econ_data_swap(district_data)
-    district_data.each do |category, data|
-    if data.class == Hash
-      extract_bad_econ_data(category, data)
-    elsif data.class == Fixnum || data.class == Float
-      data.delete_if{|year, percent| percent == 0.0}
-    end
-    end
-  end
-
-  def extract_bad_econ_data(category, data)
-    if data.all?{|key, value|value.class == Hash}
-      data.each do |subject, scores_by_year|
-      scores_by_year.delete_if{|yr,pct|pct==0.0}
-      end
-    else
-      data.delete_if{|yr,score|score==0.0}
     end
   end
 

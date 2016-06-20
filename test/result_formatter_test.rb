@@ -78,7 +78,7 @@ class ResultFormatterTest < Minitest::Test
     academy = "Academy 20"
 
     dummy_participation = ((0.7 * 6) + (0.8 * 5)) / (5 + 6)
-    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten])
+    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten_participation])
     kindergarten_var = dummy_participation / state_participation
 
     dummy_income = ((60000 * 3) + (70000 * 2)) / (3 + 2)
@@ -93,7 +93,7 @@ class ResultFormatterTest < Minitest::Test
     academy = "Academy 20"
 
     dummy_participation = ((0.7 * 6) + (0.8 * 5)) / (5 + 6)
-    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten])
+    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten_participation])
     kindergarten_var = dummy_participation / state_participation
 
     dummy_income = ((60000 * 3) + (70000 * 2)) / (3 + 2)
@@ -111,7 +111,7 @@ class ResultFormatterTest < Minitest::Test
 
     academy_participation = ((0.7 * 6) + (0.8 * 5)) / (5 + 6)
     adams_participation = ((0.3 * 6) + (0.2 * 5)) / (5 + 6)
-    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten])
+    state_participation = @ha.calculate_average(@ha.state.enrollment.enrollment_data[:kindergarten_participation])
     academy_kindergarten_var = academy_participation / state_participation
     adams_kindergarten_var = adams_participation / state_participation
 

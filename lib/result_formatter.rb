@@ -1,5 +1,37 @@
 require 'pry'
 module ResultFormatter
+  def kindergarten_participation_rate_variation(district, competing_district)
+    district_avg = kindergarten_variation(district)
+    if competing_district[:against] == "COLORADO"
+      competing_avg = kindergarten_variation("Colorado")
+    else
+      competing_avg = kindergarten_variation(competing_district[:against])
+    end
+    district_avg / competing_avg
+  end
+
+  def kindergarten_participation_rate_variation_trend(district_name1,district_name2)
+    district1 =@dr.find_by_name(district_name1)
+    district2 =@dr.find_by_name(district_name2)
+    percents1 = district1.enrollment.enrollment_data[:kindergarten]
+    percents2= district2.enrollment.enrollment_data[:kindergarten]
+    merge_results(percents1,percents2)
+  end
+
+  def merge_results(percents1,percents2)
+    result = percents1.merge(percents2){|k, a_value, b_value| a_value/b_value }
+    answer= result.each do |k, v|
+      result[k] = truncate_float(v)
+    end
+    answer
+  end
+
+  def truncate_float(float)
+    unless float == nil
+      (float * 1000).floor / 1000.to_f
+    end
+  end
+
   def kindergarten_participation_against_high_school_graduation(district)
     kinder = kindergarten_variation(district)
     grad = grad_avg(@dr.find_by_name(district)) / state_grad_avg
@@ -31,6 +63,13 @@ module ResultFormatter
     end
   end
 
+  def kindergarten_variation(district)
+    @state = @dr.districts.shift.last if @state.nil?
+    d_kin = @dr.find_by_name(district).enrollment.enrollment_data[:kindergarten_participation]
+    s_kin = @state.enrollment.enrollment_data[:kindergarten_participation]
+    calculate_average(d_kin) / calculate_average(s_kin) unless d_kin.empty?
+  end
+
   def subset_correlation_check(subset)
     qualifying_districts = 0
     subset[:across].each do |district|
@@ -38,7 +77,15 @@ module ResultFormatter
         qualifying_districts += 1
       end
     end
-    statewide_correlation_confirmation(qualifying_districts)
+    subset_correlation_confirmation(qualifying_districts, subset)
+  end
+
+  def subset_correlation_confirmation(qualifying_districts, subset)
+    if qualifying_districts > subset.count * 0.7
+      true
+    else
+      false
+    end
   end
 
   def statewide_correlation_check
@@ -64,6 +111,8 @@ module ResultFormatter
     @rs = ResultSet.new({:matching_districts => [], :statewide_average => nil})
     @state = @dr.districts.shift.last if @state.nil?
     @dr.districts.each do |name, district|
+      bad_enrollment_data_swap(district.enrollment.enrollment_data)
+      bad_econ_data_swap(district.economic_profile.economic_data)
       format_high_poverty_and_hs_graduation(district) if lunch?(district)
     end
   end
@@ -72,7 +121,41 @@ module ResultFormatter
     @rs = ResultSet.new({:matching_districts => [], :statewide_average => nil})
     @state = @dr.districts.shift.last if @state.nil?
     @dr.districts.each do |name, district|
+      bad_enrollment_data_swap(district.enrollment.enrollment_data)
+      bad_econ_data_swap(district.economic_profile.economic_data)
       format_income_disparity(district) if median_income?(district)
+    end
+  end
+
+  def bad_enrollment_data_swap(district_data)
+    district_data.each do |category, stat|
+      extract_bad_enrollment_data(category, stat) if stat.class == Hash
+    end
+  end
+
+  def extract_bad_enrollment_data(category, stat)
+    stat.delete_if do |year, percent|
+      percent == 0.0
+    end
+  end
+
+  def bad_econ_data_swap(district_data)
+    district_data.each do |category, data|
+    if data.class == Hash
+      extract_bad_econ_data(category, data)
+    elsif data.class == Fixnum || data.class == Float
+      data.delete_if{|year, percent| percent == 0.0}
+    end
+    end
+  end
+
+  def extract_bad_econ_data(category, data)
+    if data.all?{|key, value|value.class == Hash}
+      data.each do |subject, scores_by_year|
+      scores_by_year.delete_if{|yr,pct|pct==0.0}
+      end
+    else
+      data.delete_if{|yr,score|score==0.0}
     end
   end
 
@@ -139,7 +222,7 @@ module ResultFormatter
   end
   
   def state_lunch_avg
-    lunch = economic_profile.economic_data[:eligible_for_free_or_reduced_lunch]
+    lunch = @state.economic_profile.economic_data[:eligible_for_free_or_reduced_lunch]
     calculate_free_lunch(lunch)
   end
 
@@ -210,12 +293,6 @@ module ResultFormatter
      median_income(@dr.find_by_name(district)).to_f / state_median_income.to_f
    end
 
-   def kindergarten_variation(district)
-     @state = @dr.districts.shift.last if @state.nil?
-     d_kin = @dr.find_by_name(district).enrollment.enrollment_data[:kindergarten]
-     s_kin = @state.enrollment.enrollment_data[:kindergarten]
-     calculate_average(d_kin) / calculate_average(s_kin) unless d_kin.empty?
-   end
 
    def kindergarten_participation_correlates_with_household_income(district)
     if district.keys.include?(:across)
@@ -228,7 +305,7 @@ module ResultFormatter
    end
 
    def kindergarten_vs_household_income_correlation(district)
-     if (0.6..1.5).cover?(kindergarten_participation_against_household_income(district)).to_f
+     if (0.6..1.5).cover?(kindergarten_participation_against_household_income(district))
        true
      end
    end

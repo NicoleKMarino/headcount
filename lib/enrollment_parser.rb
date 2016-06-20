@@ -43,7 +43,7 @@ module EnrollmentParser
   end
 
   def kindergarten_spec(district)
-   {:name => district, :kindergarten => format_instance(district)}
+   {:name => district, :kindergarten_participation => format_instance(district)}
   end
 
   def graduation_spec(district)
